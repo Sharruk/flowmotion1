@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from datetime import date, timedelta
 from .models import Habit, YesNoHabit, MeasurableHabit, HabitResponse, StreakData
+from .ai_utils import get_habit_suggestions
 
 
 @login_required
@@ -49,6 +50,12 @@ def habit_create(request):
         reminder_enabled = request.POST.get('reminder_enabled') == 'on'
         reminder_time = request.POST.get('reminder_time') or None
         
+        # Get AI suggestions
+        try:
+            ai_data = get_habit_suggestions(name, question or notes)
+        except Exception:
+            ai_data = None
+        
         if habit_type == 'measurable':
             habit = MeasurableHabit.objects.create(
                 user=request.user,
@@ -62,6 +69,9 @@ def habit_create(request):
                 unit=request.POST.get('unit', ''),
                 target_value=request.POST.get('target_value', 0),
                 target_type=request.POST.get('target_type', 'at_least'),
+                ai_category=ai_data.get('category') if ai_data else None,
+                ai_suggestions=ai_data.get('suggested_tools') if ai_data else None,
+                ai_estimated_time=ai_data.get('estimated_time') if ai_data else None,
             )
         else:
             habit = YesNoHabit.objects.create(
@@ -73,6 +83,9 @@ def habit_create(request):
                 color=color,
                 reminder_enabled=reminder_enabled,
                 reminder_time=reminder_time,
+                ai_category=ai_data.get('category') if ai_data else None,
+                ai_suggestions=ai_data.get('suggested_tools') if ai_data else None,
+                ai_estimated_time=ai_data.get('estimated_time') if ai_data else None,
             )
         
         StreakData.objects.create(habit=habit)

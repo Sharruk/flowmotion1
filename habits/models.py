@@ -26,6 +26,9 @@ class Habit(models.Model):
     icon = models.CharField(max_length=50, default='check')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
     notes = models.TextField(blank=True)
+    ai_category = models.CharField(max_length=100, blank=True, null=True)
+    ai_suggestions = models.JSONField(blank=True, null=True) # Stores tools and links
+    ai_estimated_time = models.CharField(max_length=100, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
