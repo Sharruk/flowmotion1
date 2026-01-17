@@ -20,3 +20,6 @@ pydantic
 pydantic-core==2.41.5
 python-dotenv
 tenacity
+google-generativeai
+google-generativeai
+grpcio==1.68.1
