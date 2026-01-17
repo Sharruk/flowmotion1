@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}History - FlowMotion{% endblock %}
+
+{% block content %}
+<div class="history-page">
+    <header class="page-header">
+        <h1>History</h1>
+        <p>Your habit completion history for the last 30 days</p>
+    </header>
+    
+    {% if history_data %}
+    <div class="history-table-container">
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Habit</th>
+                    {% for d in dates %}
+                    <th class="date-header">{{ d|date:"d" }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for habit_id, data in history_data.items %}
+                <tr>
+                    <td class="habit-name" style="border-left: 4px solid {{ data.habit.color }}">
+                        {{ data.habit.name }}
+                    </td>
+                    {% for d, response in data.dates.items %}
+                    <td class="status-cell">
+                        {% if response %}
+                            {% if response.completed %}
+                            <span class="status-dot completed" title="Completed"></span>
+                            {% else %}
+                            <span class="status-dot missed" title="Missed"></span>
+                            {% endif %}
+                        {% else %}
+                        <span class="status-dot none" title="No data"></span>
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="legend">
+        <span class="legend-item"><span class="status-dot completed"></span> Completed</span>
+        <span class="legend-item"><span class="status-dot missed"></span> Missed</span>
+        <span class="legend-item"><span class="status-dot none"></span> No Data</span>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>No habits to show history for.</p>
+        <a href="{% url 'habit_create' %}" class="btn btn-primary">Create a Habit</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

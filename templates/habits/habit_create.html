@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Habit - FlowMotion{% endblock %}
+
+{% block content %}
+<div class="create-habit-page">
+    <header class="page-header">
+        <h1>Create New Habit</h1>
+    </header>
+    
+    <form method="post" class="habit-form">
+        {% csrf_token %}
+        
+        <div class="form-section">
+            <h2>Habit Type</h2>
+            <div class="radio-group">
+                <label class="radio-card">
+                    <input type="radio" name="habit_type" value="yesno" checked onchange="toggleMeasurable(false)">
+                    <div class="radio-content">
+                        <strong>Yes/No</strong>
+                        <p>Simple completion tracking</p>
+                    </div>
+                </label>
+                <label class="radio-card">
+                    <input type="radio" name="habit_type" value="measurable" onchange="toggleMeasurable(true)">
+                    <div class="radio-content">
+                        <strong>Measurable</strong>
+                        <p>Track with numbers</p>
+                    </div>
+                </label>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h2>Basic Info</h2>
+            <div class="form-group">
+                <label for="name">Habit Name</label>
+                <input type="text" id="name" name="name" required placeholder="e.g., Morning Exercise">
+            </div>
+            <div class="form-group">
+                <label for="question">Question</label>
+                <input type="text" id="question" name="question" required 
+                       placeholder="e.g., Did you exercise today?">
+            </div>
+            <div class="form-group">
+                <label for="frequency">Frequency</label>
+                <select id="frequency" name="frequency">
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="custom">Custom</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-section measurable-fields" style="display: none;">
+            <h2>Measurement</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="target_value">Target Value</label>
+                    <input type="number" id="target_value" name="target_value" step="0.01" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="unit">Unit</label>
+                    <input type="text" id="unit" name="unit" placeholder="e.g., minutes, km">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="target_type">Target Type</label>
+                <select id="target_type" name="target_type">
+                    <option value="at_least">At Least</option>
+                    <option value="exactly">Exactly</option>
+                    <option value="at_most">At Most</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h2>Appearance</h2>
+            <div class="form-group">
+                <label for="color">Color</label>
+                <input type="color" id="color" name="color" value="#6366f1">
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h2>Reminders</h2>
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="reminder_enabled" id="reminder_enabled">
+                    Enable Reminder
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="reminder_time">Reminder Time</label>
+                <input type="time" id="reminder_time" name="reminder_time">
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <div class="form-group">
+                <label for="notes">Notes (optional)</label>
+                <textarea id="notes" name="notes" rows="3" placeholder="Any additional notes..."></textarea>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <a href="{% url 'habit_list' %}" class="btn btn-outline">Cancel</a>
+            <button type="submit" class="btn btn-primary">Create Habit</button>
+        </div>
+    </form>
+</div>
+
+<script>
+function toggleMeasurable(show) {
+    const fields = document.querySelector('.measurable-fields');
+    fields.style.display = show ? 'block' : 'none';
+}
+</script>
+{% endblock %}

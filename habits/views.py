@@ -1,0 +1,215 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.http import JsonResponse
+from django.utils import timezone
+from datetime import date, timedelta
+from .models import Habit, YesNoHabit, MeasurableHabit, HabitResponse, StreakData
+
+
+@login_required
+def dashboard(request):
+    habits = Habit.objects.filter(user=request.user, status='active')
+    today = date.today()
+    
+    habits_data = []
+    for habit in habits:
+        response = HabitResponse.objects.filter(habit=habit, date=today).first()
+        streak, _ = StreakData.objects.get_or_create(habit=habit)
+        
+        habits_data.append({
+            'habit': habit,
+            'response': response,
+            'streak': streak,
+            'completed_today': response.completed if response else False,
+        })
+    
+    context = {
+        'habits_data': habits_data,
+        'today': today,
+    }
+    return render(request, 'habits/dashboard.html', context)
+
+
+@login_required
+def habit_list(request):
+    habits = Habit.objects.filter(user=request.user)
+    return render(request, 'habits/habit_list.html', {'habits': habits})
+
+
+@login_required
+def habit_create(request):
+    if request.method == 'POST':
+        habit_type = request.POST.get('habit_type', 'yesno')
+        name = request.POST.get('name')
+        question = request.POST.get('question')
+        frequency = request.POST.get('frequency', 'daily')
+        notes = request.POST.get('notes', '')
+        color = request.POST.get('color', '#6366f1')
+        reminder_enabled = request.POST.get('reminder_enabled') == 'on'
+        reminder_time = request.POST.get('reminder_time') or None
+        
+        if habit_type == 'measurable':
+            habit = MeasurableHabit.objects.create(
+                user=request.user,
+                name=name,
+                question=question,
+                frequency=frequency,
+                notes=notes,
+                color=color,
+                reminder_enabled=reminder_enabled,
+                reminder_time=reminder_time,
+                unit=request.POST.get('unit', ''),
+                target_value=request.POST.get('target_value', 0),
+                target_type=request.POST.get('target_type', 'at_least'),
+            )
+        else:
+            habit = YesNoHabit.objects.create(
+                user=request.user,
+                name=name,
+                question=question,
+                frequency=frequency,
+                notes=notes,
+                color=color,
+                reminder_enabled=reminder_enabled,
+                reminder_time=reminder_time,
+            )
+        
+        StreakData.objects.create(habit=habit)
+        messages.success(request, f'Habit "{name}" created successfully!')
+        return redirect('habit_detail', habit_id=habit.id)
+    
+    return render(request, 'habits/habit_create.html')
+
+
+@login_required
+def habit_detail(request, habit_id):
+    habit = get_object_or_404(Habit, id=habit_id, user=request.user)
+    today = date.today()
+    
+    responses = HabitResponse.objects.filter(habit=habit).order_by('-date')[:30]
+    streak, _ = StreakData.objects.get_or_create(habit=habit)
+    today_response = HabitResponse.objects.filter(habit=habit, date=today).first()
+    
+    is_measurable = hasattr(habit, 'measurablehabit')
+    measurable_data = habit.measurablehabit if is_measurable else None
+    
+    total_responses = HabitResponse.objects.filter(habit=habit).count()
+    completed_responses = HabitResponse.objects.filter(habit=habit, completed=True).count()
+    completion_rate = (completed_responses / total_responses * 100) if total_responses > 0 else 0
+    
+    context = {
+        'habit': habit,
+        'responses': responses,
+        'streak': streak,
+        'today_response': today_response,
+        'is_measurable': is_measurable,
+        'measurable_data': measurable_data,
+        'completion_rate': round(completion_rate, 1),
+    }
+    return render(request, 'habits/habit_detail.html', context)
+
+
+@login_required
+def habit_respond(request, habit_id):
+    if request.method == 'POST':
+        habit = get_object_or_404(Habit, id=habit_id, user=request.user)
+        today = date.today()
+        
+        response, created = HabitResponse.objects.get_or_create(
+            habit=habit,
+            date=today,
+            defaults={'completed': False}
+        )
+        
+        is_measurable = hasattr(habit, 'measurablehabit')
+        
+        if is_measurable:
+            value = request.POST.get('value', 0)
+            response.value = float(value) if value else 0
+            measurable = habit.measurablehabit
+            
+            if measurable.target_type == 'at_least':
+                response.completed = response.value >= measurable.target_value
+            elif measurable.target_type == 'exactly':
+                response.completed = response.value == measurable.target_value
+            else:
+                response.completed = response.value <= measurable.target_value
+        else:
+            completed = request.POST.get('completed') == 'yes'
+            response.completed = completed
+        
+        if response.completed:
+            response.emotional_state = 'happy'
+        else:
+            response.emotional_state = 'neutral'
+        
+        response.save()
+        
+        streak, _ = StreakData.objects.get_or_create(habit=habit)
+        if response.completed:
+            if streak.last_completed == today - timedelta(days=1):
+                streak.current_streak += 1
+            elif streak.last_completed != today:
+                streak.current_streak = 1
+            streak.last_completed = today
+            if streak.current_streak > streak.best_streak:
+                streak.best_streak = streak.current_streak
+        else:
+            streak.current_streak = 0
+        streak.save()
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': True,
+                'completed': response.completed,
+                'emotional_state': response.emotional_state,
+                'current_streak': streak.current_streak,
+            })
+        
+        return redirect('habit_detail', habit_id=habit.id)
+    
+    return redirect('dashboard')
+
+
+@login_required
+def history(request):
+    habits = Habit.objects.filter(user=request.user)
+    
+    end_date = date.today()
+    start_date = end_date - timedelta(days=30)
+    
+    responses = HabitResponse.objects.filter(
+        habit__user=request.user,
+        date__range=[start_date, end_date]
+    ).select_related('habit')
+    
+    dates = []
+    current = start_date
+    while current <= end_date:
+        dates.append(current)
+        current += timedelta(days=1)
+    
+    history_data = {}
+    for habit in habits:
+        history_data[habit.id] = {
+            'habit': habit,
+            'dates': {}
+        }
+        for d in dates:
+            history_data[habit.id]['dates'][d] = None
+    
+    for response in responses:
+        if response.habit.id in history_data:
+            history_data[response.habit.id]['dates'][response.date] = response
+    
+    context = {
+        'history_data': history_data,
+        'dates': dates,
+    }
+    return render(request, 'habits/history.html', context)
+
+
+@login_required
+def settings_view(request):
+    return render(request, 'habits/settings.html')

@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - FlowMotion{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <header class="page-header">
+        <h1>Dashboard</h1>
+        <p class="date">{{ today|date:"l, F j, Y" }}</p>
+    </header>
+    
+    <div class="dashboard-stats" id="stats-container">
+        <div class="stat-card">
+            <span class="stat-value" id="total-habits">{{ habits_data|length }}</span>
+            <span class="stat-label">Active Habits</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value" id="completion-rate">--</span>
+            <span class="stat-label">Weekly Rate</span>
+        </div>
+    </div>
+    
+    <section class="habits-today">
+        <div class="section-header">
+            <h2>Today's Habits</h2>
+            <a href="{% url 'habit_create' %}" class="btn btn-primary">+ New Habit</a>
+        </div>
+        
+        {% if habits_data %}
+        <div class="habit-cards">
+            {% for item in habits_data %}
+            <div class="habit-card {% if item.completed_today %}completed{% endif %}" 
+                 style="border-left: 4px solid {{ item.habit.color }}">
+                <div class="habit-info">
+                    <h3>{{ item.habit.name }}</h3>
+                    <p class="habit-question">{{ item.habit.question }}</p>
+                    <div class="habit-streak">
+                        Streak: {{ item.streak.current_streak }} days
+                    </div>
+                </div>
+                <div class="habit-actions">
+                    {% if not item.completed_today %}
+                    <form method="post" action="{% url 'habit_respond' item.habit.id %}" class="quick-respond">
+                        {% csrf_token %}
+                        <input type="hidden" name="completed" value="yes">
+                        <button type="submit" class="btn btn-success">Done</button>
+                    </form>
+                    {% else %}
+                    <span class="completed-badge">Completed</span>
+                    {% endif %}
+                    <a href="{% url 'habit_detail' item.habit.id %}" class="btn btn-outline">View</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>No habits yet. Create your first habit to get started!</p>
+            <a href="{% url 'habit_create' %}" class="btn btn-primary">Create Habit</a>
+        </div>
+        {% endif %}
+    </section>
+    
+    <section class="weekly-chart">
+        <h2>This Week</h2>
+        <canvas id="weeklyChart" height="200"></canvas>
+    </section>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/stats/')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('completion-rate').textContent = data.completion_rate + '%';
+            
+            const ctx = document.getElementById('weeklyChart').getContext('2d');
+            const labels = data.daily_data.map(d => {
+                const date = new Date(d.date);
+                return date.toLocaleDateString('en-US', { weekday: 'short' });
+            });
+            const completed = data.daily_data.map(d => d.completed);
+            const totals = data.daily_data.map(d => d.total);
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Completed',
+                        data: completed,
+                        backgroundColor: '#6366f1',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(err => console.log('Stats not loaded'));
+});
+</script>
+{% endblock %}

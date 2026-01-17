@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}My Habits - FlowMotion{% endblock %}
+
+{% block content %}
+<div class="habits-page">
+    <header class="page-header">
+        <h1>My Habits</h1>
+        <a href="{% url 'habit_create' %}" class="btn btn-primary">+ New Habit</a>
+    </header>
+    
+    {% if habits %}
+    <div class="habit-list">
+        {% for habit in habits %}
+        <a href="{% url 'habit_detail' habit.id %}" class="habit-list-item" 
+           style="border-left: 4px solid {{ habit.color }}">
+            <div class="habit-main">
+                <h3>{{ habit.name }}</h3>
+                <p>{{ habit.question }}</p>
+            </div>
+            <div class="habit-meta">
+                <span class="frequency">{{ habit.get_frequency_display }}</span>
+                <span class="status status-{{ habit.status }}">{{ habit.get_status_display }}</span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>You haven't created any habits yet.</p>
+        <a href="{% url 'habit_create' %}" class="btn btn-primary">Create Your First Habit</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

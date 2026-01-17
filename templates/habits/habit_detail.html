@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ habit.name }} - FlowMotion{% endblock %}
+
+{% block content %}
+<div class="habit-detail-page">
+    <header class="page-header">
+        <div class="header-content">
+            <a href="{% url 'habit_list' %}" class="back-link">Back to Habits</a>
+            <h1 style="color: {{ habit.color }}">{{ habit.name }}</h1>
+            <p class="habit-question">{{ habit.question }}</p>
+        </div>
+    </header>
+    
+    <div class="habit-detail-grid">
+        <section class="response-section">
+            <h2>Today's Response</h2>
+            {% if today_response and today_response.completed %}
+            <div class="completed-message">
+                <span class="emoji">
+                    {% if today_response.emotional_state == 'happy' %}
+                    {% elif today_response.emotional_state == 'sad' %}
+                    {% else %}
+                    {% endif %}
+                </span>
+                <p>Completed for today!</p>
+            </div>
+            {% else %}
+            <form method="post" action="{% url 'habit_respond' habit.id %}" class="response-form">
+                {% csrf_token %}
+                {% if is_measurable %}
+                <div class="form-group">
+                    <label>Enter your value ({{ measurable_data.unit }})</label>
+                    <input type="number" name="value" step="0.01" required 
+                           placeholder="Target: {{ measurable_data.target_value }}">
+                </div>
+                {% else %}
+                <div class="yesno-buttons">
+                    <button type="submit" name="completed" value="yes" class="btn btn-success btn-large">Yes</button>
+                    <button type="submit" name="completed" value="no" class="btn btn-danger btn-large">No</button>
+                </div>
+                {% endif %}
+                {% if is_measurable %}
+                <button type="submit" class="btn btn-primary">Submit</button>
+                {% endif %}
+            </form>
+            {% endif %}
+        </section>
+        
+        <section class="stats-section">
+            <h2>Statistics</h2>
+            <div class="stat-grid">
+                <div class="stat-item">
+                    <span class="stat-value">{{ streak.current_streak }}</span>
+                    <span class="stat-label">Current Streak</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ streak.best_streak }}</span>
+                    <span class="stat-label">Best Streak</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ completion_rate }}%</span>
+                    <span class="stat-label">Completion Rate</span>
+                </div>
+            </div>
+        </section>
+        
+        <section class="chart-section">
+            <h2>Progress</h2>
+            <canvas id="progressChart" height="200"></canvas>
+        </section>
+        
+        <section class="history-section">
+            <h2>Recent History</h2>
+            <div class="response-list">
+                {% for response in responses %}
+                <div class="response-item {% if response.completed %}completed{% endif %}">
+                    <span class="date">{{ response.date|date:"M d" }}</span>
+                    <span class="status">
+                        {% if response.completed %}
+                        Completed
+                        {% else %}
+                        Missed
+                        {% endif %}
+                    </span>
+                </div>
+                {% empty %}
+                <p>No responses yet.</p>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/habits/{{ habit.id }}/responses/')
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            const labels = data.responses.map(r => {
+                const date = new Date(r.date);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
+            const values = data.responses.map(r => r.completed ? 1 : 0);
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Completed',
+                        data: values,
+                        borderColor: '{{ habit.color }}',
+                        backgroundColor: '{{ habit.color }}22',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 1,
+                            ticks: {
+                                callback: function(value) {
+                                    return value === 1 ? 'Yes' : 'No';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(err => console.log('Chart data not loaded'));
+});
+</script>
+{% endblock %}

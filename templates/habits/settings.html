@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Settings - FlowMotion{% endblock %}
+
+{% block content %}
+<div class="settings-page">
+    <header class="page-header">
+        <h1>Settings</h1>
+    </header>
+    
+    <div class="settings-content">
+        <section class="settings-section">
+            <h2>Account</h2>
+            <div class="setting-item">
+                <span class="setting-label">Username</span>
+                <span class="setting-value">{{ user.username }}</span>
+            </div>
+            <div class="setting-item">
+                <span class="setting-label">Email</span>
+                <span class="setting-value">{{ user.email|default:"Not set" }}</span>
+            </div>
+        </section>
+        
+        <section class="settings-section">
+            <h2>Notifications</h2>
+            <p class="info-text">
+                Desktop notifications are available when running locally on Linux with notify-send.
+            </p>
+        </section>
+        
+        <section class="settings-section">
+            <h2>About</h2>
+            <p>FlowMotion - Intelligent Habit Tracking</p>
+            <p class="version">Version 1.0.0</p>
+        </section>
+    </div>
+</div>
+{% endblock %}
