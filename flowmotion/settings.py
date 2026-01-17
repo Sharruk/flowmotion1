@@ -12,11 +12,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-pavn56f%v39a#u%o3kv0taboldvr8omx(0m%hypv+^7v^t=cf)')
 
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = ['*']
+REPLIT_DEPLOYMENT = os.environ.get('REPLIT_DEPLOYMENT', '0') == '1'
+
+if REPLIT_DEPLOYMENT:
+    ALLOWED_HOSTS = ['.replit.app', '.replit.dev', 'localhost', '127.0.0.1']
+else:
+    ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = ['https://*.replit.dev', 'https://*.replit.app']
+
+if REPLIT_DEPLOYMENT:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',
