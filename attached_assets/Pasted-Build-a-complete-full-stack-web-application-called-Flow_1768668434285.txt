@@ -1,0 +1,228 @@
+Build a complete full-stack web application called “FlowMotion” — an intelligent habit and task management system designed for Linux desktop users.
+
+PROJECT TYPE:
+- Full-stack web application
+- Designed for local Linux (Ubuntu) execution
+- Developed and demonstrated in Replit environment
+
+TECH STACK (MANDATORY):
+- Backend: Python 3.9+, Django 4.x
+- Database: SQLite3
+- Frontend: HTML5, CSS3, Vanilla JavaScript
+- AI Integration: Gemini API (free tier) or Perplexity API
+- Notifications: Linux desktop notifications using notify-send (implemented in code; functional when run locally on Ubuntu)
+- Charts: Chart.js
+- APIs: Django REST Framework
+
+--------------------------------------------------
+CORE FEATURES TO IMPLEMENT
+--------------------------------------------------
+
+1) HABIT / TASK CREATION
+
+Support two habit types using Django model inheritance:
+
+A) YES / NO HABIT (Binary)
+- Fields:
+  - Habit name
+  - Question (manual or AI-generated)
+  - Frequency (daily / weekly / custom)
+  - Notes (optional)
+- User response:
+  - Yes (completed)
+  - No (not completed)
+  - No response
+
+Example:
+“Did you exercise today?”
+
+B) MEASURABLE HABIT (Quantitative)
+- Fields:
+  - Habit name
+  - Question
+  - Unit (minutes, km, pages, etc.)
+  - Target value
+  - Target type (at least / exactly / at most)
+  - Frequency
+  - Notes (optional)
+- User provides numeric input
+- System evaluates completion automatically
+
+COMMON FIELDS FOR ALL HABITS:
+- UUID
+- Name
+- Question
+- Frequency
+- Reminder enabled (boolean)
+- Reminder time
+- Color / icon
+- Created timestamp
+- Status (active / paused)
+
+--------------------------------------------------
+2) DATABASE DESIGN (SQLite)
+--------------------------------------------------
+
+Use Django ORM with model inheritance.
+
+Required models:
+- Habit (base model)
+- YesNoHabit (inherits Habit)
+- MeasurableHabit (inherits Habit)
+- HabitResponse (stores daily responses)
+- UserProfile (preferences + learning data in JSON)
+- StreakData (current streak, best streak)
+
+--------------------------------------------------
+3) SMART SCHEDULING & LEARNING SYSTEM
+--------------------------------------------------
+
+Implement adaptive reminder logic:
+- Track completion times and missed tasks
+- Gradually adjust reminder timing (max 5 min/day)
+- Store learning data in UserProfile as JSON
+
+Example:
+If user consistently completes a 9:00 AM task at 9:15 AM,
+slowly shift reminder closer to 9:10 AM over days.
+
+--------------------------------------------------
+4) LINUX NOTIFICATION SYSTEM
+--------------------------------------------------
+
+Implement notifications using Python subprocess and notify-send.
+
+Two notification types:
+- Pre-reminder (10 minutes before)
+- Main reminder (scheduled time)
+
+Notification content:
+- Task question
+- Friendly emotional tone (😄 / 😐 / 😢)
+- Clicking notification opens:
+  http://localhost:8000/habits/<habit_id>/
+
+Note:
+Notification logic should be implemented even if Replit itself cannot display Linux notifications.
+
+--------------------------------------------------
+5) EMOTIONAL FEEDBACK SYSTEM
+--------------------------------------------------
+
+After user response:
+- Completed → Encouraging message 😄
+- Delayed → Neutral reminder 😐
+- Missed → Supportive message 😢
+
+Store emotional state in HabitResponse and reflect in UI.
+
+--------------------------------------------------
+6) AI-POWERED TASK UNDERSTANDING
+--------------------------------------------------
+
+When task is created:
+- Send task description to Gemini API
+- Ask AI to return:
+  - Task category (presentation, coding, writing, etc.)
+  - Suggested tools
+  - Estimated time
+
+Display results with direct links to tools.
+
+--------------------------------------------------
+7) TASK TRACKING & STREAKS
+--------------------------------------------------
+
+Track:
+- Daily completion
+- Current streak
+- Best streak
+- Completion percentage
+
+Reset streak when a task is missed.
+
+--------------------------------------------------
+8) HISTORY & VISUALIZATION
+--------------------------------------------------
+
+Use Chart.js to display:
+- Calendar view (completed / missed / no data)
+- Bar chart (last 7 days)
+- Line chart (streak trend)
+- Pie chart (completion rate)
+
+--------------------------------------------------
+9) WIDGET-LIKE DASHBOARD
+--------------------------------------------------
+
+Create a dashboard page that behaves like a widget:
+- Next task
+- Countdown timer
+- Emotional status
+- Quick actions (complete / snooze)
+
+--------------------------------------------------
+10) CONTINUOUS LEARNING
+--------------------------------------------------
+
+Nightly background task:
+- Analyze user behavior
+- Adjust reminder timing slightly
+- Update emotional tone preference
+- Generate weekly summary
+
+--------------------------------------------------
+UI & ROUTING
+--------------------------------------------------
+
+Pages:
+- /login/
+- /dashboard/
+- /habits/
+- /habits/create/
+- /habits/<id>/
+- /history/
+- /settings/
+- /api/
+
+Design:
+- Clean and minimal
+- Desktop-optimized
+- Emotion-friendly
+- Well-commented for academic review
+
+--------------------------------------------------
+PROJECT STRUCTURE
+--------------------------------------------------
+
+flowmotion/
+├── manage.py
+├── requirements.txt
+├── .env
+├── habits/
+├── users/
+├── analytics/
+├── templates/
+├── static/
+└── tests/
+
+--------------------------------------------------
+DELIVERABLE
+--------------------------------------------------
+
+Produce a runnable Django project with:
+- Modular code
+- Sample data
+- Clear README instructions
+- Well-commented logic suitable for academic evaluation
+
+PRIORITY ORDER:
+1. Models & database
+2. Habit CRUD
+3. Notifications
+4. AI integration
+5. History & charts
+6. Learning system
+7. UI polish
+
+Focus on correctness and clarity over advanced styling.
