@@ -10,4 +10,6 @@ urlpatterns = [
     path('habits/<uuid:habit_id>/respond/', views.habit_respond, name='habit_respond'),
     path('history/', views.history, name='history'),
     path('settings/', views.settings_view, name='settings'),
+    path('widget/', views.widget_dashboard, name='widget_dashboard'),
+    path('habits/<uuid:habit_id>/snooze/', views.snooze_habit, name='snooze_habit'),
 ]

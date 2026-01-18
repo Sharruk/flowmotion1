@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="widget-container">
+    <div class="widget-card">
+        <div class="widget-header">
+            <span class="emotional-status">{{ emotional_status }}</span>
+            <h3>Next Habit</h3>
+        </div>
+        
+        {% if next_habit %}
+        <div class="widget-body">
+            <h4 id="habit-name">{{ next_habit.name }}</h4>
+            <p id="habit-question">{{ next_habit.question }}</p>
+            
+            <div class="countdown-timer" id="countdown" data-time="{{ next_habit.reminder_time|time:'H:i' }}">
+                --:--:--
+            </div>
+            
+            <div class="widget-actions">
+                <a href="{% url 'habit_detail' next_habit.id %}" class="btn btn-primary">Complete</a>
+                <a href="{% url 'snooze_habit' next_habit.id %}" class="btn btn-secondary">Snooze</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="widget-body">
+            <p>No upcoming habits. Great job! 😄</p>
+        </div>
+        {% endif %}
+        
+        <div class="widget-footer">
+            <p class="feedback">{{ feedback_message }}</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.widget-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+.widget-card {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    width: 300px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.widget-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.emotional-status {
+    font-size: 24px;
+}
+.countdown-timer {
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    margin: 20px 0;
+    color: #dc3545;
+}
+.widget-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+.widget-footer {
+    margin-top: 20px;
+    text-align: center;
+    font-style: italic;
+    font-size: 0.9em;
+}
+</style>
+
+<script>
+function updateCountdown() {
+    const timerElement = document.getElementById('countdown');
+    if (!timerElement) return;
+    
+    const targetTimeStr = timerElement.getAttribute('data-time');
+    const [hours, minutes] = targetTimeStr.split(':');
+    
+    const now = new Date();
+    const target = new Date();
+    target.setHours(parseInt(hours), parseInt(minutes), 0);
+    
+    if (target < now) {
+        target.setDate(target.getDate() + 1);
+    }
+    
+    const diff = target - now;
+    
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    
+    timerElement.innerText = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+</script>
+{% endblock %}

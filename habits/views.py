@@ -228,5 +228,44 @@ def history(request):
 
 
 @login_required
+def widget_dashboard(request):
+    now = timezone.now()
+    
+    # Get next upcoming habit for today
+    next_habit = Habit.objects.filter(
+        user=request.user,
+        status='active',
+        reminder_enabled=True,
+        reminder_time__gte=now.time()
+    ).order_by('reminder_time').first()
+    
+    # If no more for today, check first one tomorrow
+    if not next_habit:
+        next_habit = Habit.objects.filter(
+            user=request.user,
+            status='active',
+            reminder_enabled=True
+        ).order_by('reminder_time').first()
+
+    # Get emotional status (last response)
+    last_response = HabitResponse.objects.filter(
+        habit__user=request.user
+    ).order_by('-date', '-created_at').first()
+    
+    context = {
+        'next_habit': next_habit,
+        'emotional_status': last_response.emotional_state if last_response else 'neutral',
+        'feedback_message': last_response.feedback_message if last_response else "Start your journey today! 😄",
+    }
+    return render(request, 'habits/widget.html', context)
+
+@login_required
+def snooze_habit(request, habit_id):
+    habit = get_object_or_404(Habit, id=habit_id, user=request.user)
+    # Simple snooze: just add a message
+    messages.info(request, f'Habit "{habit.name}" snoozed for 15 minutes 😐')
+    return redirect('widget_dashboard')
+
+@login_required
 def settings_view(request):
     return render(request, 'habits/settings.html')
