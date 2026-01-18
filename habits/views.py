@@ -154,8 +154,12 @@ def habit_respond(request, habit_id):
         
         if response.completed:
             response.emotional_state = 'happy'
+            messages.success(request, f'Encouraging message 😄 - Habit "{habit.name}" completed!')
         else:
+            # Check if it was supposed to be done earlier (Delayed vs Missed)
+            # For simplicity, we'll use neutral for any response today
             response.emotional_state = 'neutral'
+            messages.info(request, f'Neutral reminder 😐 - Keep going with "{habit.name}"!')
         
         response.save()
         

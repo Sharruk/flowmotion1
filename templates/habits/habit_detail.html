@@ -19,8 +19,11 @@
             <div class="completed-message">
                 <span class="emoji">
                     {% if today_response.emotional_state == 'happy' %}
+                        😄
                     {% elif today_response.emotional_state == 'sad' %}
+                        😢
                     {% else %}
+                        😐
                     {% endif %}
                 </span>
                 <p>Completed for today!</p>
