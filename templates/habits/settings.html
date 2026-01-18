@@ -29,21 +29,6 @@
         </section>
         
         <section class="settings-section">
-            <h2>Desktop Widget</h2>
-            <p class="info-text">
-                Add a quick-access widget to your Linux Desktop. This will create a shortcut file on your Desktop.
-            </p>
-            <form method="post">
-                {% csrf_token %}
-                <div class="form-check" style="margin: 15px 0;">
-                    <input type="checkbox" name="enable_widget" id="enable_widget" style="margin-right: 10px;">
-                    <label for="enable_widget">Create Desktop Widget Shortcut</label>
-                </div>
-                <button type="submit" class="btn btn-primary">Create Shortcut</button>
-            </form>
-        </section>
-        
-        <section class="settings-section">
             <h2>About</h2>
             <p>FlowMotion - Intelligent Habit Tracking</p>
             <p class="version">Version 1.0.0</p>

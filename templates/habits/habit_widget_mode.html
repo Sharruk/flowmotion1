@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="widget-mode-container">
+    <div class="widget-card">
+        <header class="widget-header">
+            <h1>{{ habit.name }}</h1>
+        </header>
+
+        <div class="widget-info">
+            <div class="deadline-info">
+                <strong>Deadline:</strong> 
+                {% if habit.reminder_time %}
+                    {{ habit.reminder_time|time:"H:i" }}
+                {% else %}
+                    No deadline set
+                {% endif %}
+            </div>
+
+            <div class="status-info">
+                <strong>Status:</strong>
+                {% if today_response and today_response.completed %}
+                    <span class="status-badge completed">✅ Completed</span>
+                {% else %}
+                    <span class="status-badge pending">❌ Pending</span>
+                {% endif %}
+            </div>
+
+            <div class="countdown-container">
+                <div id="widget-countdown" class="countdown" data-time="{{ habit.reminder_time|time:'H:i' }}">
+                    --:--
+                </div>
+                <div id="deadline-status" class="deadline-status"></div>
+            </div>
+        </div>
+
+        <div class="widget-footer">
+            <a href="{% url 'habit_detail' habit.id %}" class="btn btn-sm btn-outline-primary">Open Full View</a>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Reset base styles for widget mode */
+body {
+    background-color: transparent !important;
+}
+.navbar, .footer {
+    display: none !important;
+}
+
+.widget-mode-container {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.widget-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    width: 100%;
+    max-width: 300px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.widget-header h1 {
+    font-size: 1.2rem;
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.widget-info > div {
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.status-badge {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+.status-badge.completed { color: #2e7d32; background: #e8f5e9; }
+.status-badge.pending { color: #c62828; background: #ffebee; }
+
+.countdown-container {
+    text-align: center;
+    margin-top: 15px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 6px;
+}
+
+.countdown {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1976d2;
+}
+
+.deadline-status {
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+.deadline-passed { color: #c62828; font-weight: bold; }
+</style>
+
+<script>
+function updateWidgetCountdown() {
+    const timerElement = document.getElementById('widget-countdown');
+    const statusElement = document.getElementById('deadline-status');
+    if (!timerElement) return;
+    
+    const targetTimeStr = timerElement.getAttribute('data-time');
+    if (!targetTimeStr) {
+        timerElement.innerText = "No Time";
+        return;
+    }
+
+    const [hours, minutes] = targetTimeStr.split(':');
+    
+    const now = new Date();
+    const target = new Date();
+    target.setHours(parseInt(hours), parseInt(minutes), 0);
+    
+    const diff = target - now;
+    
+    if (diff < 0) {
+        timerElement.innerText = "00:00";
+        statusElement.innerHTML = '<span class="deadline-passed">⏰ Deadline passed</span>';
+        return;
+    }
+    
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    
+    timerElement.innerText = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} remaining`;
+}
+
+setInterval(updateWidgetCountdown, 60000);
+updateWidgetCountdown();
+</script>
+{% endblock %}

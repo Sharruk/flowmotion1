@@ -22,6 +22,7 @@ class Habit(models.Model):
     frequency = models.CharField(max_length=20, choices=FREQUENCY_CHOICES, default='daily')
     reminder_enabled = models.BooleanField(default=False)
     reminder_time = models.TimeField(null=True, blank=True)
+    widget_enabled = models.BooleanField(default=False)
     color = models.CharField(max_length=7, default='#6366f1')
     icon = models.CharField(max_length=50, default='check')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')

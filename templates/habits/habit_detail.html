@@ -50,6 +50,22 @@
             {% endif %}
         </section>
         
+        <section class="widget-section" style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e0e0e0;">
+            <h3>Desktop Widget</h3>
+            <p>Desktop widgets are implemented using Linux .desktop shortcut files.</p>
+            {% if widget_exists %}
+                <div style="color: #2e7d32; font-weight: bold; margin-bottom: 10px;">
+                    ✅ Widget already created for this habit
+                </div>
+            {% endif %}
+            <form method="post" action="{% url 'create_widget' habit.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-primary">
+                    📌 {% if widget_exists %}Recreate{% else %}Add{% endif %} Desktop Widget for this Habit
+                </button>
+            </form>
+        </section>
+
         <section class="stats-section">
             <h2>Statistics</h2>
             <div class="stat-grid">
@@ -122,7 +138,6 @@
         </section>
     </div>
 </div>
-
 {% endblock %}
 
 {% block extra_js %}

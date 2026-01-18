@@ -6,7 +6,7 @@ from django.utils import timezone
 from datetime import date, timedelta
 from .models import Habit, YesNoHabit, MeasurableHabit, HabitResponse, StreakData
 from .ai_utils import get_habit_suggestions
-
+from .widget_utils import create_habit_widget_shortcut, check_widget_exists
 
 @login_required
 def dashboard(request):
@@ -31,12 +31,10 @@ def dashboard(request):
     }
     return render(request, 'habits/dashboard.html', context)
 
-
 @login_required
 def habit_list(request):
     habits = Habit.objects.filter(user=request.user)
     return render(request, 'habits/habit_list.html', {'habits': habits})
-
 
 @login_required
 def habit_create(request):
@@ -50,7 +48,6 @@ def habit_create(request):
         reminder_enabled = request.POST.get('reminder_enabled') == 'on'
         reminder_time = request.POST.get('reminder_time') or None
         
-        # Get AI suggestions
         try:
             ai_data = get_habit_suggestions(name, question or notes)
         except Exception:
@@ -94,12 +91,13 @@ def habit_create(request):
     
     return render(request, 'habits/habit_create.html')
 
-
 @login_required
 def habit_detail(request, habit_id):
     habit = get_object_or_404(Habit, id=habit_id, user=request.user)
     today = date.today()
-    
+    is_widget_mode = request.GET.get('widget') == 'true'
+    widget_exists = check_widget_exists(habit.id)
+
     responses = HabitResponse.objects.filter(habit=habit).order_by('-date')[:30]
     streak, _ = StreakData.objects.get_or_create(habit=habit)
     today_response = HabitResponse.objects.filter(habit=habit, date=today).first()
@@ -119,29 +117,38 @@ def habit_detail(request, habit_id):
         'is_measurable': is_measurable,
         'measurable_data': measurable_data,
         'completion_rate': round(completion_rate, 1),
+        'is_widget_mode': is_widget_mode,
+        'widget_exists': widget_exists,
     }
+    
+    if is_widget_mode:
+        return render(request, 'habits/habit_widget_mode.html', context)
     return render(request, 'habits/habit_detail.html', context)
 
+@login_required
+def create_widget(request, habit_id):
+    habit = get_object_or_404(Habit, id=habit_id, user=request.user)
+    success, result = create_habit_widget_shortcut(habit)
+    if success:
+        habit.widget_enabled = True
+        habit.save()
+        messages.success(request, f"📌 Widget already created for this habit!")
+    else:
+        messages.error(request, f"Could not create widget: {result}")
+    return redirect('habit_detail', habit_id=habit.id)
 
 @login_required
 def habit_respond(request, habit_id):
     if request.method == 'POST':
         habit = get_object_or_404(Habit, id=habit_id, user=request.user)
         today = date.today()
-        
         response, created = HabitResponse.objects.get_or_create(
-            habit=habit,
-            date=today,
-            defaults={'completed': False}
+            habit=habit, date=today, defaults={'completed': False}
         )
-        
-        is_measurable = hasattr(habit, 'measurablehabit')
-        
-        if is_measurable:
+        if hasattr(habit, 'measurablehabit'):
             value = request.POST.get('value', 0)
             response.value = float(value) if value else 0
             measurable = habit.measurablehabit
-            
             if measurable.target_type == 'at_least':
                 response.completed = response.value >= measurable.target_value
             elif measurable.target_type == 'exactly':
@@ -149,18 +156,14 @@ def habit_respond(request, habit_id):
             else:
                 response.completed = response.value <= measurable.target_value
         else:
-            completed = request.POST.get('completed') == 'yes'
-            response.completed = completed
+            response.completed = request.POST.get('completed') == 'yes'
         
         if response.completed:
             response.emotional_state = 'happy'
             messages.success(request, f'Encouraging message 😄 - Habit "{habit.name}" completed!')
         else:
-            # Check if it was supposed to be done earlier (Delayed vs Missed)
-            # For simplicity, we'll use neutral for any response today
             response.emotional_state = 'neutral'
             messages.info(request, f'Neutral reminder 😐 - Keep going with "{habit.name}"!')
-        
         response.save()
         
         streak, _ = StreakData.objects.get_or_create(habit=habit)
@@ -177,81 +180,40 @@ def habit_respond(request, habit_id):
         streak.save()
         
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({
-                'success': True,
-                'completed': response.completed,
-                'emotional_state': response.emotional_state,
-                'current_streak': streak.current_streak,
-            })
-        
+            return JsonResponse({'success': True, 'completed': response.completed, 'emotional_state': response.emotional_state, 'current_streak': streak.current_streak})
         return redirect('habit_detail', habit_id=habit.id)
-    
     return redirect('dashboard')
-
 
 @login_required
 def history(request):
     habits = Habit.objects.filter(user=request.user)
-    
     end_date = date.today()
     start_date = end_date - timedelta(days=30)
-    
-    responses = HabitResponse.objects.filter(
-        habit__user=request.user,
-        date__range=[start_date, end_date]
-    ).select_related('habit')
-    
+    responses = HabitResponse.objects.filter(habit__user=request.user, date__range=[start_date, end_date]).select_related('habit')
     dates = []
     current = start_date
     while current <= end_date:
         dates.append(current)
         current += timedelta(days=1)
-    
     history_data = {}
     for habit in habits:
-        history_data[habit.id] = {
-            'habit': habit,
-            'dates': {}
-        }
-        for d in dates:
-            history_data[habit.id]['dates'][d] = None
-    
+        history_data[habit.id] = {'habit': habit, 'dates': {d: None for d in dates}}
     for response in responses:
         if response.habit.id in history_data:
             history_data[response.habit.id]['dates'][response.date] = response
-    
-    context = {
-        'history_data': history_data,
-        'dates': dates,
-    }
-    return render(request, 'habits/history.html', context)
+    return render(request, 'habits/history.html', {'history_data': history_data, 'dates': dates})
 
+@login_required
+def settings_view(request):
+    return render(request, 'habits/settings.html')
 
 @login_required
 def widget_dashboard(request):
     now = timezone.now()
-    
-    # Get next upcoming habit for today
-    next_habit = Habit.objects.filter(
-        user=request.user,
-        status='active',
-        reminder_enabled=True,
-        reminder_time__gte=now.time()
-    ).order_by('reminder_time').first()
-    
-    # If no more for today, check first one tomorrow
+    next_habit = Habit.objects.filter(user=request.user, status='active', reminder_enabled=True, reminder_time__gte=now.time()).order_by('reminder_time').first()
     if not next_habit:
-        next_habit = Habit.objects.filter(
-            user=request.user,
-            status='active',
-            reminder_enabled=True
-        ).order_by('reminder_time').first()
-
-    # Get emotional status (last response)
-    last_response = HabitResponse.objects.filter(
-        habit__user=request.user
-    ).order_by('-date', '-created_at').first()
-    
+        next_habit = Habit.objects.filter(user=request.user, status='active', reminder_enabled=True).order_by('reminder_time').first()
+    last_response = HabitResponse.objects.filter(habit__user=request.user).order_by('-date', '-created_at').first()
     context = {
         'next_habit': next_habit,
         'emotional_status': last_response.emotional_state if last_response else 'neutral',
@@ -262,36 +224,5 @@ def widget_dashboard(request):
 @login_required
 def snooze_habit(request, habit_id):
     habit = get_object_or_404(Habit, id=habit_id, user=request.user)
-    # Simple snooze: just add a message
     messages.info(request, f'Habit "{habit.name}" snoozed for 15 minutes 😐')
     return redirect('widget_dashboard')
-
-@login_required
-def settings_view(request):
-    if request.method == 'POST':
-        enable_widget = request.POST.get('enable_widget') == 'on'
-        # In a real environment, we'd save this to a Profile model. 
-        # For now, let's trigger the shortcut creation if enabled.
-        if enable_widget:
-            try:
-                import os
-                desktop_path = os.path.expanduser("~/Desktop")
-                if not os.path.exists(desktop_path):
-                    os.makedirs(desktop_path)
-                
-                shortcut_content = f"""[Desktop Entry]
-Name=FlowMotion Widget
-Exec=xdg-open http://localhost:5000/widget/
-Icon=appointment-new
-Type=Application
-Categories=Utility;
-"""
-                with open(os.path.join(desktop_path, "flowmotion_widget.desktop"), "w") as f:
-                    f.write(shortcut_content)
-                os.chmod(os.path.join(desktop_path, "flowmotion_widget.desktop"), 0o755)
-                messages.success(request, "Widget shortcut created on your Linux Desktop! 😄")
-            except Exception as e:
-                messages.error(request, f"Could not create shortcut: {e}")
-        return redirect('settings')
-        
-    return render(request, 'habits/settings.html')

@@ -1,0 +1,156 @@
+Modify the existing FlowMotion Django web application to support PER-HABIT DESKTOP WIDGETS on Linux.
+
+IMPORTANT CONTEXT:
+FlowMotion is a Django-based full-stack web application running locally on Ubuntu Linux.
+Desktop widgets are implemented using Linux `.desktop` shortcut files (NOT native GNOME widgets).
+
+--------------------------------------------------
+MAIN GOAL
+--------------------------------------------------
+
+Each habit should optionally have its OWN desktop widget.
+
+• Widget is created from inside the habit page
+• Widget is specific to that habit only
+• Widget shows habit name, deadline, and status
+• Multiple widgets must be supported (one per habit)
+• Widget creation must NOT be in Settings page
+
+--------------------------------------------------
+REMOVE OLD BEHAVIOR (VERY IMPORTANT)
+--------------------------------------------------
+
+REMOVE the "Create Desktop Widget" option from the Settings page completely.
+
+Widgets should NOT be created globally.
+Widgets should NOT be created from Settings anymore.
+
+--------------------------------------------------
+FEATURE 1: PER-HABIT WIDGET CREATION
+--------------------------------------------------
+
+Inside EACH habit detail page:
+URL: /habits/<habit_id>/
+
+Add a new section:
+
+UI:
+• Button: "📌 Add Desktop Widget for this Habit"
+
+If widget already exists:
+• Show text: "✅ Widget already created for this habit"
+
+Behavior when button is clicked:
+• Generate a Linux `.desktop` file dynamically
+• File name:
+  flowmotion_<habit_id>.desktop
+• Save file to:
+  ~/Desktop/
+
+.desktop file content:
+• Name: FlowMotion – <Habit Name>
+• Comment: Track habit: <Habit Name>
+• Exec: Open browser to:
+  http://127.0.0.1:8000/habits/<habit_id>/?widget=true
+• Icon: FlowMotion icon
+• Terminal: false
+• Type: Application
+
+Database:
+• Add Boolean field to Habit model:
+  widget_enabled = True / False
+
+--------------------------------------------------
+FEATURE 2: MULTIPLE WIDGET SUPPORT
+--------------------------------------------------
+
+Rules:
+• Each habit can have its own widget
+• No global widget
+• No limit on widgets
+• Widgets are independent
+
+If user deletes the `.desktop` file manually:
+• Detect missing file
+• Allow user to recreate widget from habit page
+
+--------------------------------------------------
+FEATURE 3: WIDGET MODE UI
+--------------------------------------------------
+
+When habit page is opened with:
+?widget=true
+
+Enable "Widget Mode":
+
+UI changes:
+• Minimal layout
+• NO navbar
+• Compact card design
+
+Always show:
+• Habit name
+• Today’s deadline time
+• Countdown timer (JavaScript)
+• Completion status:
+  ✅ Completed
+  ❌ Pending
+  ⏳ Missed
+
+--------------------------------------------------
+FEATURE 4: DEADLINE & COUNTDOWN
+--------------------------------------------------
+
+Widget must show:
+• Scheduled reminder time
+• Remaining time until deadline
+• If deadline passed:
+  "⏰ Deadline passed"
+
+Use JavaScript:
+• Live countdown
+• Update every 60 seconds
+• Format: HH:MM remaining
+
+--------------------------------------------------
+FEATURE 5: OPTIONAL WIDGET
+--------------------------------------------------
+
+Widget creation is OPTIONAL.
+
+• User chooses per habit
+• No automatic widget creation
+• Some habits may have widgets, some may not
+
+--------------------------------------------------
+FEATURE 6: CLEAN ACADEMIC IMPLEMENTATION
+--------------------------------------------------
+
+Code structure:
+• All widget-related logic in:
+  habits/widget_utils.py
+
+Requirements:
+• Clear comments for academic evaluation
+• Simple and readable code
+• Explain in README:
+  "Desktop widgets are implemented using Linux .desktop shortcut files"
+
+DO NOT:
+• Use browser notifications
+• Use mobile widgets
+• Use native GNOME extensions
+
+--------------------------------------------------
+FINAL EXPECTATION
+--------------------------------------------------
+
+After implementation:
+• Widgets are created per habit
+• Widgets show habit-specific deadline & status
+• Multiple widgets work correctly
+• Widgets open correct habit page
+• Widget creation is ONLY inside habit pages
+• Settings page has NO widget option
+
+Focus on correctness first, styling second.
