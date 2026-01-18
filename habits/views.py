@@ -268,4 +268,30 @@ def snooze_habit(request, habit_id):
 
 @login_required
 def settings_view(request):
+    if request.method == 'POST':
+        enable_widget = request.POST.get('enable_widget') == 'on'
+        # In a real environment, we'd save this to a Profile model. 
+        # For now, let's trigger the shortcut creation if enabled.
+        if enable_widget:
+            try:
+                import os
+                desktop_path = os.path.expanduser("~/Desktop")
+                if not os.path.exists(desktop_path):
+                    os.makedirs(desktop_path)
+                
+                shortcut_content = f"""[Desktop Entry]
+Name=FlowMotion Widget
+Exec=xdg-open http://localhost:5000/widget/
+Icon=appointment-new
+Type=Application
+Categories=Utility;
+"""
+                with open(os.path.join(desktop_path, "flowmotion_widget.desktop"), "w") as f:
+                    f.write(shortcut_content)
+                os.chmod(os.path.join(desktop_path, "flowmotion_widget.desktop"), 0o755)
+                messages.success(request, "Widget shortcut created on your Linux Desktop! 😄")
+            except Exception as e:
+                messages.error(request, f"Could not create shortcut: {e}")
+        return redirect('settings')
+        
     return render(request, 'habits/settings.html')
