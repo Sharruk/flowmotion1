@@ -96,7 +96,7 @@ def habit_detail(request, habit_id):
     habit = get_object_or_404(Habit, id=habit_id, user=request.user)
     today = date.today()
     is_widget_mode = request.GET.get('widget') == 'true'
-    widget_exists = check_widget_exists(habit.id)
+    widget_exists = check_widget_exists(habit)
 
     responses = HabitResponse.objects.filter(habit=habit).order_by('-date')[:30]
     streak, _ = StreakData.objects.get_or_create(habit=habit)
@@ -128,11 +128,11 @@ def habit_detail(request, habit_id):
 @login_required
 def create_widget(request, habit_id):
     habit = get_object_or_404(Habit, id=habit_id, user=request.user)
-    success, result = create_habit_widget_shortcut(habit)
+    success, result = create_habit_widget_shortcut(habit, request)
     if success:
         habit.widget_enabled = True
         habit.save()
-        messages.success(request, f"📌 Widget already created for this habit!")
+        messages.success(request, f"📌 Widget created for this habit!")
     else:
         messages.error(request, f"Could not create widget: {result}")
     return redirect('habit_detail', habit_id=habit.id)
