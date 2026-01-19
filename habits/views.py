@@ -5,7 +5,8 @@ from django.http import JsonResponse
 from django.utils import timezone
 from datetime import date, timedelta
 from .models import Habit, YesNoHabit, MeasurableHabit, HabitResponse, StreakData
-from .ai_utils import get_habit_suggestions
+from .ai_utils import get_habit_suggestions, get_emotional_feedback
+from .notification_service import send_notification
 from .widget_utils import create_habit_widget_shortcut, check_widget_exists
 
 @login_required
@@ -158,14 +159,6 @@ def habit_respond(request, habit_id):
         else:
             response.completed = request.POST.get('completed') == 'yes'
         
-        if response.completed:
-            response.emotional_state = 'happy'
-            messages.success(request, f'Encouraging message 😄 - Habit "{habit.name}" completed!')
-        else:
-            response.emotional_state = 'neutral'
-            messages.info(request, f'Neutral reminder 😐 - Keep going with "{habit.name}"!')
-        response.save()
-        
         streak, _ = StreakData.objects.get_or_create(habit=habit)
         if response.completed:
             if streak.last_completed == today - timedelta(days=1):
@@ -178,9 +171,30 @@ def habit_respond(request, habit_id):
         else:
             streak.current_streak = 0
         streak.save()
+
+        # Generate genuine emotional feedback via AI
+        feedback = get_emotional_feedback(habit.name, response.completed, streak.current_streak)
+        response.feedback_message = feedback
+        
+        if response.completed:
+            response.emotional_state = 'happy'
+            # Send Linux desktop notification
+            send_notification(habit, feedback, action=False)
+            messages.success(request, feedback)
+        else:
+            response.emotional_state = 'neutral'
+            messages.info(request, feedback)
+        
+        response.save()
         
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({'success': True, 'completed': response.completed, 'emotional_state': response.emotional_state, 'current_streak': streak.current_streak})
+            return JsonResponse({
+                'success': True, 
+                'completed': response.completed, 
+                'emotional_state': response.emotional_state, 
+                'current_streak': streak.current_streak,
+                'feedback': feedback
+            })
         return redirect('habit_detail', habit_id=habit.id)
     return redirect('dashboard')
 

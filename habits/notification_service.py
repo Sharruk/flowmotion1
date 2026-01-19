@@ -23,9 +23,11 @@ def send_notification(habit, message, action=True):
     if action:
         # Note: notify-send action support depends on the notification server
         # We include the URL in the message as a fallback
+        url_text = f"\nClick to start: {url}"
+        full_message = f"{message}{url_text}"
         cmd.extend(['--action', f'open={url}'])
-        full_message = f"{message}\nClick to start: {url}"
-        cmd[-1] = full_message # Update message to include URL
+        # Replace the last element (the message) with the full message
+        cmd[5] = full_message 
     
     try:
         subprocess.run(cmd, check=False)
