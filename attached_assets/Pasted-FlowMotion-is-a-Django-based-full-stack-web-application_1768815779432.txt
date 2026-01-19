@@ -1,0 +1,140 @@
+FlowMotion is a Django-based full-stack web application running locally on Ubuntu Linux at:
+
+http://127.0.0.1:8000
+
+
+This project does NOT use browser notifications.
+
+All reminders must be sent using Linux system notifications via:
+
+notify-send
+
+
+The website itself does NOT push notifications.
+Instead, Django runs a background scheduler that checks time and tells Linux to show notifications.
+
+🧠 CORE IDEA (IMPORTANT)
+Habit Schedule (Database)
+        ↓
+Background Time Checker (APScheduler)
+        ↓
+Linux Desktop Notification (notify-send)
+
+🛠 TECHNOLOGY (FIXED – DO NOT CHANGE)
+Purpose	Tool
+Backend	Django
+Scheduler	APScheduler
+Notifications	notify-send
+Click action	notify-send --action
+OS	Ubuntu Linux
+
+❌ No browser notifications
+❌ No Firebase
+❌ No Celery
+❌ No mobile notifications
+
+✔ Pure Linux desktop notifications (college-level project)
+
+🎯 MAIN GOAL
+
+Implement a PER-HABIT Linux notification system that works automatically in the background.
+
+Each habit must send its own notifications independently.
+
+🔔 NOTIFICATION FLOW (PER HABIT)
+Example Habit
+
+Habit: Exercise
+
+Time: 4:00 PM
+
+Frequency: Daily
+
+Timeline
+Time	Notification
+3:50 PM	Upcoming reminder
+4:00 PM	Main reminder (clickable)
+4:10 PM	Missed reminder
+Every 10 min	Repeat until completed
+When completed	Stop notifications
+🔔 NOTIFICATION RULES (VERY IMPORTANT)
+1️⃣ Pre-Reminder (10 minutes before)
+
+Send:
+
+⏰ Exercise starts in 10 minutes
+
+2️⃣ Main Reminder (Clickable)
+
+At exact reminder time:
+
+▶ Time for Exercise – Click to start
+
+
+When clicked, it must open:
+
+http://127.0.0.1:8000/habits/<habit_id>/
+
+
+Use:
+
+notify-send --action
+
+3️⃣ Missed Reminder
+
+If habit is NOT completed:
+
+❌ You missed Exercise. Start now?
+
+
+Repeat every 10 minutes until:
+
+Habit is marked completed
+
+OR the day ends
+
+🗓 FREQUENCY SUPPORT
+
+Notification logic must respect habit frequency:
+
+Daily → Every day
+
+Weekly → Only selected weekday
+
+Custom → Only selected dates
+
+Skip notifications on invalid days.
+
+🧠 IMPLEMENTATION REQUIREMENTS
+Scheduler
+
+Use APScheduler
+
+Run a background job every 1 minute
+
+Check all habits
+
+Decide which notification to send
+
+Notification Logic
+
+Use subprocess to call notify-send
+
+No browser-based notifications
+
+All logic runs server-side
+
+Backend File Structure
+
+Create:
+
+habits/notification_service.py
+
+
+This file must:
+
+Calculate current time vs habit time
+
+Send correct notification (pre / main / missed)
+
+Stop notifications once habit is completed

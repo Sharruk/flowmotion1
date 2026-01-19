@@ -23,3 +23,5 @@ tenacity
 google-generativeai
 google-generativeai
 grpcio==1.68.1
+apscheduler
+django-apscheduler
