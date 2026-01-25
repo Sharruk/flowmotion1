@@ -8,7 +8,7 @@
 
 ---
 
-## 📖 Introductiona
+## 📖 Introduction
 
 In today’s fast-paced world, traditional task and habit management systems often push users toward rigid productivity goals, ignoring individual routines, energy levels, and emotional well-being.
 
