@@ -1,0 +1,91 @@
+You are an academic software engineering assistant.
+
+PROJECT CONTEXT:
+The project is “FlowMotion – Intelligent Habit & Routine Management System”,
+a Linux desktop–centric web application built using:
+- Python (Django – MVT architecture)
+- SQLite database
+- APScheduler for background scheduling
+- Linux native notifications using notify-send
+- AI (Gemini API) for emotional feedback generation
+The system is currently Linux-desktop–first and runs locally.
+
+TASK:
+Generate clear and academically structured content for the following sections:
+
+--------------------------------------------------
+3.2 High-Level System Architecture
+3.3 System Modules and Their Functions
+3.4 System Workflow / Data Flow Description
+--------------------------------------------------
+
+IMPORTANT INSTRUCTIONS:
+- Assume this is for a Software Engineering laboratory record
+- Keep diagrams SIMPLE and CONCEPTUAL
+- Do NOT over-claim (no kernel-level or enterprise-scale claims)
+- Architecture must align with Django MVT + background scheduler
+- Output should be suitable for later redrawing using diagram tools
+- Do NOT add implementation code
+- Do NOT exaggerate AI or system capabilities
+- Maintain formal academic tone
+
+--------------------------------------------------
+3.2 High-Level System Architecture
+--------------------------------------------------
+
+Provide:
+- A textual description of the high-level architecture
+- A simple block-based logical architecture with components such as:
+  • User Interface (Web Dashboard)
+  • Backend Application Server (Django)
+  • Database (SQLite)
+  • Background Scheduler (APScheduler)
+  • AI Feedback Service (Gemini API)
+  • Linux Desktop Notification Service
+
+Also include:
+- Short explanation of how these components interact
+- Mention that the architecture follows separation of concerns
+
+--------------------------------------------------
+3.3 System Modules and Their Functions
+--------------------------------------------------
+
+List and describe system modules in a table format with:
+- Module Name
+- Responsibility / Function
+
+Include modules such as:
+- Authentication Module
+- Habit Management Module
+- Scheduling & Notification Module
+- AI Feedback Module
+- Analytics & History Module
+- Data Persistence Module
+
+Keep descriptions concise and evaluatable.
+
+--------------------------------------------------
+3.4 System Workflow / Data Flow Description
+--------------------------------------------------
+
+Describe the end-to-end workflow step-by-step, starting from:
+- User login
+- Habit creation
+- Scheduling
+- Notification triggering
+- User response
+- AI feedback generation
+- Data storage and analytics update
+
+Also:
+- Describe the primary data flows (User Data, Habit Data, Notification Triggers)
+- Use numbered steps
+- Write it so that a Level‑0 and Level‑1 DFD can be drawn from it
+
+--------------------------------------------------
+OUTPUT FORMAT:
+- Use clear headings (3.2, 3.3, 3.4)
+- Use bullet points and tables where appropriate
+- No markdown decorations needed
+- Content must be ready to paste directly into a lab record

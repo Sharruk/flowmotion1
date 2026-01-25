@@ -1,0 +1,42 @@
+3.2 High-Level System Architecture
+
+FlowMotion follows a logical block-based architecture designed for local Linux desktop execution. The system leverages the Django MVT (Model-View-Template) pattern to maintain a clear separation of concerns between data management, business logic, and user presentation.
+
+Logical Architecture Components:
+- User Interface (Web Dashboard): A responsive HTML5/CSS3 interface served locally for habit management and analytics visualization.
+- Backend Application Server (Django): The core engine processing user requests, managing habit logic, and orchestrating external service calls.
+- Database (SQLite): A lightweight, file-based relational database for persistent storage of user profiles, habit definitions, and completion history.
+- Background Scheduler (APScheduler): A persistent background daemon that monitors habit schedules independently of user web sessions.
+- AI Feedback Service (Gemini API): An external natural language processing layer that generates context-aware emotional feedback.
+- Linux Desktop Notification Service: The OS-level user-space subsystem (libnotify) used to deliver native desktop alerts via the notify-send utility.
+
+Component Interaction:
+The Web Dashboard sends user interactions to the Django server. Django persists these in the SQLite database. Simultaneously, the Background Scheduler monitors the database for upcoming deadlines. When a trigger condition is met, the Scheduler initiates a system call to the Linux Notification Service. Upon habit completion, the Django server queries the Gemini API for feedback, which is then persisted and displayed to the user.
+
+3.3 System Modules and Their Functions
+
+Module Name | Responsibility / Function
+--- | ---
+Authentication Module | Manages secure user registration, login sessions, and data isolation using Django's built-in auth framework.
+Habit Management Module | Handles the creation, modification, and deletion of binary (Yes/No) and quantitative (Measurable) habit types.
+Scheduling & Notification Module | Orchestrates background time-checks and triggers multi-tiered Linux desktop alerts (pre-reminders, main, and missed).
+AI Feedback Module | Processes habit performance data and utilizes the Gemini API to generate non-robotic, emotionally resonant feedback.
+Analytics & History Module | Aggregates daily response data to calculate streaks and generate visual performance charts using Chart.js.
+Data Persistence Module | Ensures all habit definitions and historic completion data are safely stored in the local relational database.
+
+3.4 System Workflow / Data Flow Description
+
+End-to-End Workflow:
+1. User Login: The user authenticates through the dashboard, establishing a secure session.
+2. Habit Creation: The user defines a new habit, setting parameters such as frequency, reminder time, and habit type.
+3. Scheduling: The system persists the habit and registers it with the Background Scheduler for monitoring.
+4. Notification Triggering: The Scheduler identifies an upcoming deadline and triggers a native Linux notification via notify-send.
+5. User Response: The user interacts with the notification or dashboard to mark the habit as completed for the day.
+6. AI Feedback Generation: The system sends the completion status and current streak to the Gemini API to receive a unique emotional response.
+7. Data Storage & Analytics: The response and feedback message are stored in the database, and the analytics charts are updated in real-time.
+
+Primary Data Flows:
+- User Data Flow: Credentials and session tokens flowing between the dashboard and the Authentication Module.
+- Habit Data Flow: Habit definitions and completion responses flowing from the UI to the Database through the Management Module.
+- Notification Trigger Flow: Time-based signals flowing from the Scheduler to the Linux OS to initiate desktop alerts.
+- Feedback Data Flow: Raw performance metrics flowing to the AI Engine and natural language feedback flowing back to the Database.
