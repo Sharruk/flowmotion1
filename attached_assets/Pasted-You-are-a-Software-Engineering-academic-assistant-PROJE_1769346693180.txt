@@ -1,0 +1,163 @@
+You are a Software Engineering academic assistant.
+
+PROJECT:
+FlowMotion – Intelligent Habit & Routine Management System (Linux Desktop Application)
+
+COURSE:
+ICS1405 – Software Engineering Principles and Practices
+
+TASK:
+Generate COMPLETE documentation content for **EXPERIMENT 3: Data Flow Diagram (DFD) Modeling**
+based on the FINAL version of the FlowMotion system.
+
+IMPORTANT:
+- This is an academic lab record
+- Use formal university-style language
+- Follow Anna University / SSN lab record format
+- DO NOT write code
+- DO NOT assume mobile app (Linux desktop only)
+- Output must be text-based descriptions of diagrams (I will redraw later)
+
+--------------------------------------------------
+STRUCTURE TO FOLLOW (STRICT)
+--------------------------------------------------
+
+Title Page Content:
+- Experiment Number: EXPERIMENT – 3
+- Experiment Name: Data Flow Diagram (DFD) Modeling
+- Project Name: FlowMotion – Intelligent Habit & Routine Management System
+
+-----------------------------------
+1. AIM
+-----------------------------------
+Write a clear academic aim explaining why DFDs are used for FlowMotion.
+
+-----------------------------------
+2. SCENARIO
+-----------------------------------
+Explain the purpose of modeling data flow for a Linux-based habit tracking system
+with AI feedback and OS-level notifications.
+
+-----------------------------------
+3. TOOLS USED
+-----------------------------------
+Mention:
+- draw.io (for diagram creation)
+- Django (system reference)
+- SQLite (data store reference)
+
+-----------------------------------
+4. DFD CREATION, DECOMPOSITION & ANALYSIS
+-----------------------------------
+
+4.1 LEVEL‑0 DFD (CONTEXT DIAGRAM)
+
+Include:
+- Description of Level‑0 DFD
+- External Entities:
+  • User
+  • Linux Desktop Notification System
+  • Gemini AI Service
+- Single Process:
+  • P0 – FlowMotion System
+- Data Flows:
+  • Habit data input
+  • Completion status
+  • Notification messages
+  • Emotional feedback
+
+-----------------------------------
+4.2 LEVEL‑1 DFD (DECOMPOSITION OF P0)
+
+Decompose P0 into the following processes:
+
+Processes:
+- P1 – User Authentication & Profile Management
+- P2 – Habit Creation & Management
+- P3 – Scheduling & Notification Engine
+- P4 – AI Feedback Generation
+- P5 – Analytics & History Management
+
+Data Stores:
+- D1 – User Database
+- D2 – Habit Database
+- D3 – Habit Response History
+
+Include:
+- Description
+- Process interaction explanation
+- Balancing statement with Level‑0 DFD
+
+-----------------------------------
+4.3 LEVEL‑2 DFD (DECOMPOSITION OF ONE PROCESS)
+
+Decompose ONLY:
+- P3 – Scheduling & Notification Engine
+
+Sub‑Processes:
+- P3.1 – Monitor Habit Schedule
+- P3.2 – Trigger Pre‑Reminder Notification
+- P3.3 – Trigger Main Reminder
+- P3.4 – Record User Response
+
+Explain:
+- Why only one process is decomposed
+- How data flows between sub‑processes
+
+-----------------------------------
+5. DEMO / FLOW EXPLANATION
+-----------------------------------
+
+Provide a step‑by‑step explanation:
+1. User logs in
+2. Habit is created
+3. Scheduler monitors time
+4. Linux notification is triggered
+5. User responds
+6. AI generates emotional feedback
+7. Data is stored and analytics updated
+
+-----------------------------------
+6. DATA FLOW VALIDATION
+-----------------------------------
+
+Mention:
+- No direct access from external entities to data stores
+- Every process has input and output
+- DFD balancing is maintained
+
+-----------------------------------
+7. SIMPLIFICATION, OPTIMIZATION & JUSTIFICATION
+-----------------------------------
+
+Explain:
+- Why deep decomposition was avoided
+- Why rule-based logic was grouped
+- How clarity and maintainability improved
+
+-----------------------------------
+8. DOCUMENTATION & OBSERVATIONS
+-----------------------------------
+
+Include:
+- Diagrams recorded
+- Assumptions made
+- Validation observations
+
+-----------------------------------
+9. RESULT / CONCLUSION
+-----------------------------------
+
+Conclude that:
+- Level‑0, Level‑1, and Level‑2 DFDs were successfully modeled
+- Data flow correctness and system clarity were achieved
+- The system design is maintainable and scalable
+
+--------------------------------------------------
+FINAL OUTPUT RULES
+--------------------------------------------------
+- Output ONLY documentation text
+- Use headings and subheadings
+- No bullet overload
+- No marketing language
+- Write like a lab record that fills multiple pages

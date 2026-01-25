@@ -1,0 +1,86 @@
+EXPERIMENT – 3
+Data Flow Diagram (DFD) Modeling
+FlowMotion – Intelligent Habit & Routine Management System
+
+1. AIM
+The aim of this experiment is to model the functional requirements and data movement of the FlowMotion system using multi-level Data Flow Diagrams (DFDs). This process helps in visualizing how habit data, user inputs, and AI-generated feedback circulate through the system and interact with external Linux desktop services.
+
+2. SCENARIO
+FlowMotion is a Linux-native habit tracking application that requires precise data handling for background scheduling, OS-level notifications, and AI integration. Modeling the data flow is essential to ensure that the background daemon correctly identifies deadlines and that the AI engine receives the appropriate context to generate non-robotic emotional feedback. The DFD serves as a blueprint for the system's logical data processing paths.
+
+3. TOOLS USED
+- draw.io (for structural diagram creation and export)
+- Django Framework (as the architectural reference for MVT processing)
+- SQLite Database (as the primary relational data store)
+
+4. DFD CREATION, DECOMPOSITION & ANALYSIS
+
+4.1 LEVEL-0 DFD (CONTEXT DIAGRAM)
+The Context Diagram represents the entire FlowMotion system as a single process (P0), interacting with three primary external entities.
+
+External Entities:
+- User: Provides habit definitions, schedules, and daily completion responses.
+- Linux Desktop Notification System: Receives formatted notification strings and action triggers from the system.
+- Gemini AI Service: Receives habit performance metrics and returns generated emotional feedback.
+
+Data Flows:
+- Habit Definition (User -> P0)
+- Completion Response (User -> P0)
+- Notification Trigger (P0 -> Linux Desktop)
+- AI Context/Prompt (P0 -> Gemini AI)
+- Generated Feedback (Gemini AI -> P0)
+
+4.2 LEVEL-1 DFD (DECOMPOSITION OF P0)
+The system process (P0) is decomposed into five functional processes to illustrate the internal logic and data storage interactions.
+
+Processes:
+- P1 – User Authentication & Profile Management: Handles secure access and session data.
+- P2 – Habit Creation & Management: Manages the configuration of binary and measurable habits.
+- P3 – Scheduling & Notification Engine: Monitors time and triggers Linux system calls.
+- P4 – AI Feedback Generation: Orchestrates the request/response cycle with the Gemini API.
+- P5 – Analytics & History Management: Aggregates data for streak calculation and chart visualization.
+
+Data Stores:
+- D1 – User Database: Stores credentials and user-specific settings.
+- D2 – Habit Database: Stores the configuration, frequency, and reminder times for each habit.
+- D3 – Habit Response History: Stores the daily completion logs and AI feedback messages.
+
+Balancing Statement:
+The Level-1 DFD is balanced with the Level-0 Context Diagram, as all external entities and high-level data flows are preserved, while the internal data stores (D1, D2, D3) are introduced to support the decomposed processes.
+
+4.3 LEVEL-2 DFD (DECOMPOSITION OF P3)
+Only the Scheduling & Notification Engine (P3) is decomposed to Level-2 to highlight the high-precision logic required for Linux background operations.
+
+Sub-Processes:
+- P3.1 – Monitor Habit Schedule: Queries D2 every minute to check for upcoming deadlines.
+- P3.2 – Trigger Pre-Reminder Notification: Sends a 10-minute warning message to the OS if the condition is met.
+- P3.3 – Trigger Main Reminder: Executes the notify-send command at the exact scheduled time.
+- P3.4 – Record User Response: Captures the acknowledgment from the notification or dashboard.
+
+Logic Explanation:
+P3 is chosen for decomposition because it involves complex time-based logic and external OS-level subprocess execution, which is the most critical technical module of the FlowMotion system.
+
+5. DEMO / FLOW EXPLANATION
+1. User Authentication: The user logs in, and session data is validated against D1.
+2. Habit Entry: The user creates a habit; data flows through P2 and is stored in D2.
+3. Background Monitoring: P3.1 continuously monitors D2 for active schedules.
+4. OS Alert: P3.3 triggers a 'notify-send' subprocess, appearing on the Linux desktop.
+5. User Interaction: The user marks the habit as 'Completed' via the dashboard or notification.
+6. Feedback Cycle: P4 sends completion data to the Gemini AI and receives emotional feedback.
+7. Persistence: P5 updates D3 with the completion log, feedback, and recalculated streaks.
+
+6. DATA FLOW VALIDATION
+- Entity Isolation: No external entity (User/AI/OS) has direct access to data stores (D1/D2/D3); all access is mediated through functional processes.
+- Functional Integrity: Every process (P1-P5) has at least one input and one output, ensuring no data sinks or sources are present.
+- Balancing: The inputs and outputs across all levels of DFD are mathematically consistent.
+
+7. SIMPLIFICATION, OPTIMIZATION & JUSTIFICATION
+The DFD was optimized by grouping atomic database operations within the 'Habit Management' module to avoid diagram clutter. Deeper decomposition beyond Level-2 was avoided to preserve clarity, ensuring the model remains an effective communication tool for both developers and evaluators.
+
+8. DOCUMENTATION & OBSERVATIONS
+- Diagrams Recorded: Level-0 Context, Level-1 Logic, and Level-2 Scheduling.
+- Assumptions: The Linux notification daemon is assumed to be active and reachable via shell subprocesses.
+- Observations: Data flows for the AI module were found to be highly dependent on the stability of the external API response.
+
+9. RESULT / CONCLUSION
+The Data Flow Diagrams for FlowMotion were successfully modeled across Level-0, Level-1, and Level-2. The modeling process confirmed the system's data integrity and validated the logical separation between the web-based management and the background notification engine. The resulting design is modular, maintainable, and highly scalable for future Linux environment enhancements.
