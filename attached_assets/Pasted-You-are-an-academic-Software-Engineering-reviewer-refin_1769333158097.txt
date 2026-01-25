@@ -1,0 +1,147 @@
+You are an academic Software Engineering reviewer refining a finalized project document for top-grade evaluation.
+
+TASK:
+Carefully revise the given “FlowMotion” documentation with MINIMAL, TARGETED improvements.
+
+DO NOT rewrite the entire document.
+DO NOT change the project scope.
+DO NOT introduce new features beyond what is already stated.
+
+Your goal is to:
+- Remove technical overstatements
+- Improve academic completeness
+- Strengthen evaluator-facing sections
+- Add a mature Future Scope section
+
+--------------------------------------------------
+PART A: TECHNICAL WORDING CORRECTION (CRITICAL)
+--------------------------------------------------
+
+Identify and correct any technically inaccurate or over-claiming language.
+
+Specifically:
+- Replace phrases such as:
+  “integrating into the OS kernel”
+
+With accurate, evaluator-safe wording like:
+- “Linux desktop notification subsystem”
+- “OS-level user-space notification services”
+
+Make NO other semantic changes in these sentences.
+
+--------------------------------------------------
+PART B: NON-FUNCTIONAL REQUIREMENTS COMPLETENESS
+--------------------------------------------------
+
+In the Non-Functional Requirements section:
+- Retain all existing items
+- ADD the following missing aspects with 1–2 concise lines each:
+
+1) Security  
+   Example framing:
+   “Security: User data is isolated per account using Django’s authentication framework, session middleware, and access-controlled views.”
+
+2) Scalability  
+   Example framing:
+   “Scalability: While optimized for single-user local execution, the architecture supports future migration to multi-user environments.”
+
+Do NOT imply cloud deployment or production scale.
+
+--------------------------------------------------
+PART C: ARCHITECTURE SECTION ACADEMIC SIGNALING
+--------------------------------------------------
+
+In the System Architecture section:
+- Add a brief reference such as:
+  “As illustrated in the system architecture diagram…”
+
+This is a textual reference only.
+Do NOT add or describe a diagram image.
+
+--------------------------------------------------
+PART D: AI SECTION ACADEMIC STRENGTHENING
+--------------------------------------------------
+
+Enhance the AI-related subsection to reflect responsible engineering.
+
+Without adding new features, briefly emphasize:
+- Output length constraints
+- Deterministic prompt structure
+- Basic hallucination control via constrained prompts
+
+Avoid buzzwords.
+Maintain an academic, cautious tone.
+
+--------------------------------------------------
+PART E: RESULTS / OBSERVATIONS ENRICHMENT
+--------------------------------------------------
+
+Slightly expand the Results / Testing / Validation section by adding:
+- Qualitative observations such as:
+  - Improved habit consistency
+  - Reduced missed reminders
+  - Positive engagement with emotional feedback
+
+Do NOT add numerical claims or fabricated metrics.
+
+--------------------------------------------------
+PART F: CONCLUSION ACADEMIC CLOSURE
+--------------------------------------------------
+
+Strengthen the Conclusion by:
+- Reconnecting outcomes to Software Engineering principles
+- Emphasizing learning outcomes
+- Ending with an academic reflection (not a promotional tone)
+
+Limit to one short additional paragraph.
+
+--------------------------------------------------
+PART G: ADD FUTURE SCOPE SECTION
+--------------------------------------------------
+
+ADD a new section titled:
+
+“FUTURE SCOPE AND EXTENSIONS”
+
+Placement:
+- Insert AFTER the Conclusion
+
+Content Guidelines:
+Write 4–6 concise, well-structured points covering:
+
+1) Mobile Platform Expansion  
+   - Clearly state the current system is Linux-desktop–first  
+   - Mention future Android/iOS clients using shared backend APIs  
+
+2) Cross-Device Synchronization  
+   - Optional cloud-based sync  
+   - Privacy-first design emphasis  
+
+3) Advanced AI Personalization  
+   - Emotion-adaptive feedback  
+   - Habit difficulty auto-adjustment  
+
+4) System-Level Enhancements  
+   - Deeper GNOME/KDE integration  
+   - Tray-based widget or background service  
+
+5) Scalability & Deployment  
+   - Migration from SQLite to PostgreSQL  
+   - Optional Docker-based deployment  
+
+Style Requirements:
+- Academic tone
+- Confident but realistic
+- Use phrasing such as:
+  “can be extended to…”
+  “future versions may incorporate…”
+  “the architecture allows…”
+
+--------------------------------------------------
+FINAL OUTPUT RULES
+--------------------------------------------------
+
+- Preserve all existing strengths
+- Modify only the specified areas
+- Do NOT output explanations
+- Output the revised document content only
