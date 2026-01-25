@@ -1,0 +1,113 @@
+You are a Software Engineering documentation assistant.
+
+I have built a working academic prototype called **FlowMotion**, a habit and routine management system, using the existing codebase in this Replit workspace.
+
+My institution is:
+Sri Sivasubramaniya Nadar College of Engineering (SSN), Kalavakkam  
+Course: ICS1405 – Software Engineering Principles and Practices  
+Regulation: 2023  
+Batch: 2024–2029  
+Academic Year: 2026–2027 (Even Semester)
+
+I need you to generate **formal lab documentation in DOCX (.docx) format** for the following experiments, strictly following Software Engineering principles and academic evaluation standards.
+
+⚠️ IMPORTANT INSTRUCTIONS:
+1. Use my existing project **FlowMotion** as the base system.
+2. Treat this as a **student prototype**, not a production app.
+3. Align explanations with **2nd-year Software Engineering level**.
+4. Clearly label all sections with headings.
+5. Write in clear, professional, exam-friendly language.
+6. Wherever applicable, relate explanations to the actual features visible in the code and UI.
+7. Include tables, diagrams (described textually), and justifications.
+8. Output must be a **single DOCX file**, well formatted.
+
+----------------------------------------------------------------
+EXPERIMENT 1: Problem Identification, Requirements Analysis, System Design & Implementation
+----------------------------------------------------------------
+
+Include the following sections:
+
+1. Title Page (with project name, course details, institution details)
+2. Problem Identification
+   - Clear problem statement
+   - Real-world motivation
+   - Limitations of existing systems
+3. Stakeholder Analysis
+   - Users
+   - Developers
+   - Academic evaluators
+4. Requirements Analysis
+   - Functional Requirements (table)
+   - Non-Functional Requirements (table)
+5. System Design
+   - High-level architecture description
+   - Module description (Frontend, Backend, Database, AI)
+   - Justification of design choices
+6. Implementation
+   - Technologies used
+   - Modular implementation explanation
+   - Screens / features implemented
+7. Testing & Observations
+   - Basic testing performed
+   - Observed outputs
+8. Conclusion & Inference
+
+----------------------------------------------------------------
+EXPERIMENT 2: Software Requirements Specification (SRS)
+----------------------------------------------------------------
+
+Follow **IEEE-style SRS structure**, include:
+
+1. Introduction
+   - Purpose
+   - Scope
+   - Definitions
+2. Overall Description
+   - Product perspective
+   - User characteristics
+   - Operating environment
+3. Functional Requirements
+   - Numbered list
+   - Clear descriptions
+4. Non-Functional Requirements
+   - Performance
+   - Usability
+   - Reliability
+   - Security
+5. Constraints
+   - Academic constraints
+   - Time constraints
+   - Platform constraints (Linux-based development)
+6. Assumptions & Dependencies
+7. Traceability (simple mapping explanation)
+8. SRS Conclusion
+
+----------------------------------------------------------------
+EXPERIMENT 3: Data Flow Diagrams (DFD)
+----------------------------------------------------------------
+
+Include:
+
+1. Introduction to DFD
+2. Level-0 DFD
+   - External entities
+   - Main process
+   - Data stores
+   - Data flow explanation
+3. Level-1 DFD
+   - Decomposition of main process
+   - Sub-process explanations
+4. Level-2 DFD (selected module)
+   - Detailed breakdown
+5. DFD Validation & Balancing
+6. Simplification & Optimization Analysis
+7. Observations & Justification
+8. Conclusion
+
+----------------------------------------------------------------
+FINAL REQUIREMENTS:
+- Maintain consistency across all experiments
+- Clearly state this is a **prototype implementation**
+- Mention future scope where features are not fully implemented
+- Use diagrams as textual descriptions suitable for lab records
+- Generate the final output as a **single DOCX file**

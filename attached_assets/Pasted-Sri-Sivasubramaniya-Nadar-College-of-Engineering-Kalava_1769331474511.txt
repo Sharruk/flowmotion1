@@ -1,0 +1,174 @@
+Sri Sivasubramaniya Nadar College of Engineering, Kalavakkam- 603 110
+(An Autonomous Institution, Affiliated to Anna University, Chennai)
+ICS1405 – Software Engineering Principles and Practices [TCP]
+Regulation: 2023
+Batch: 2024–2029
+Academic Year: 2026–2027 (EVEN)
+General Instructions for All Experiments
+1. Apply all experiments directly to your chosen project.
+2. Record stepwise observations in your lab notebook including:
+o Diagrams, screenshots, tables, plots, logs
+o Algorithm / logic used
+o Tools and commands executed
+o Evidence supporting analysis or evaluation
+o Document all the methods used
+3. Demonstrate incremental and modular implementation in code.
+4. Use any tools for deployment, CI/CD, MLFlow, Optuna, or GitHub workflows.
+5. Include conclusions, inferences, and justification for each task.
+6. Clearly label each section (Problem Analysis, Requirements, Design,
+Implementation, Testing, etc.) for evaluation.
+Experiment 1: Identify a problem statement, perform requirements analysis, design
+the system and implement the system using Software Engineering Principles
+Marks Distribution:
+• Algorithm / Analysis – 40
+• Demo / Implementation – 40
+• Modular Documentation – 20
+Scenario:
+Your team has selected a real-world project. You are required to apply and analyze
+software engineering principles to identify the problem, understand requirements,
+design the system, and implement a small working prototype.
+Tasks :
+1. Problem Identification (CO1 | K3–K4 | PI: 1.3.1, 2.1.1)
+• Apply engineering fundamentals to clearly define the problem statement.
+• Analyze and categorize the problem by dividing it into sub-problems.
+• Examine and analyze stakeholders by identifying their roles, motives, and
+relationships.
+• Organize and inspect all stakeholders, subcomponents, and their
+interrelationships in the lab notebook.
+2. Requirements Analysis (CO1 | K3–K4 | PI: 2.1.1)
+• Identify and apply functional and non-functional requirements to the selected
+problem.
+• Analyze relationships between system modules and user requirements.
+• Examine dependencies and justify requirement decisions using logical inference.
+• Organize and record requirements using structured tables for clarity and
+traceability.
+3. System Design (CO1 | K3–K4 | PI: 1.3.1, 5.1.2)
+• Apply and construct a high-level system design by identifying modules,
+components, and interactions.
+• Model and analyze the system using appropriate block or flow diagrams.
+• Examine and justify each design decision based on engineering principles and
+constraints.
+4. Implementation (CO1 | K3–K4 | PI: 5.1.2, 11.1.1)
+• Develop and build a small working prototype or system module using modular
+coding practices.
+• Test for correctness and analyze outputs, errors, and system behavior.
+• Inspect and record observations, including basic cost or resource considerations,
+wherever applicable.
+
+Sri Sivasubramaniya Nadar College of Engineering, Kalavakkam- 603 110
+(An Autonomous Institution, Affiliated to Anna University, Chennai)
+ICS1405 – Software Engineering Principles and Practices [TCP]
+Regulation: 2023
+Batch: 2024–2029
+Academic Year: 2026–2027 (EVEN)
+General Instructions for All Experiments
+1. Apply all experiments directly to your chosen project.
+2. Record stepwise observations in your lab notebook including:
+o Diagrams, screenshots, tables, plots, logs
+o Algorithm / logic used
+o Tools and commands executed
+o Evidence supporting analysis or evaluation
+o Document all the methods used
+3. Demonstrate incremental and modular implementation in code.
+4. Use any tools for deployment, CI/CD, MLFlow, Optuna, or GitHub workflows.
+5. Include conclusions, inferences, and justification for each task.
+6. Clearly label each section (Problem Analysis, Requirements, Design,
+Implementation, Testing, etc.) for evaluation.
+Experiment 2: Create an SRS that outlines the Functional Requirements, Nonfunctional Requirements and Constraints
+Scenario:
+For the identified real-world project, document and analyze project requirements by
+applying and analyzing software engineering principles to prepare a formal Software
+Requirements Specification (SRS) for a working prototype.
+Marks Distribution:
+• Analysis & Justification – 40
+• SRS Documentation – 40
+• Presentation / Observation – 20
+Tasks:
+Functional Requirements (CO2 | K3 | PI: 1.3.1(3), 1.4.1(3), 2.1.3(2))
+• Apply requirement elicitation techniques to identify and classify functional
+requirements.
+• Apply structured methods to organize requirements based on system
+functionality.
+Module & User Interaction Analysis (CO2 | K4 | PI: 3.1.1(2), 3.1.3(3))
+• Analyze system workflows to examine relationships between modules and user
+roles.
+• Analyze interaction paths to identify dependencies and access control.
+Non-Functional Requirements (CO2 | K3 & K4 | PI: 2.2.3(2), 2.2.4(3))
+• Apply software quality attributes to identify non-functional requirements.
+• Analyze the importance and impact of performance, reliability, usability, and
+security.
+Constraints Identification & Impact (CO2 | K3 & K4 | PI: 2.1.3(2), 2.2.3(2), 2.2.4(3))
+• Apply system knowledge to identify hardware, software, environmental, and
+business constraints.
+• Analyze how constraints influence system architecture and scalability.
+SRS Documentation & Professional Practice (CO2 | K4 | PI: 5.1.2(3), 10.1.1(3),
+10.1.2(3))
+• Analyze and organize the SRS into standard sections: Stakeholders, Functional
+Requirements, Non-Functional Requirements, Constraints, Diagrams
+• Analyze documentation by including cross-references, justification, and
+traceability.
+
+
+
+
+Sri Sivasubramaniya Nadar College of Engineering, Kalavakkam- 603 110
+(An Autonomous Institution, Affiliated to Anna University, Chennai)
+ICS1405 – Software Engineering Principles and Practices [TCP]
+Regulation: 2023
+Batch: 2024–2029
+Academic Year: 2026–2027 (EVEN)
+General Instructions for All Experiments
+1. Apply all experiments directly to your chosen project.
+2. Record stepwise observations in your lab notebook including:
+o Diagrams, screenshots, tables, plots, logs
+o Algorithm / logic used
+o Tools and commands executed
+o Evidence supporting analysis or evaluation
+o Document all the methods used
+3. Demonstrate incremental and modular implementation in code.
+4. Use any tools for deployment, CI/CD, MLFlow, Optuna, or GitHub workflows.
+5. Include conclusions, inferences, and justification for each task.
+6. Clearly label each section (Problem Analysis, Requirements, Design,
+Implementation, Testing, etc.) for evaluation.
+Experiment 3: Model the given list of requirements using Level-0 DFD and evolve
+further stages of DFD
+Scenario:
+Visualize your project’s data flow by applying and analyzing Data Flow Diagrams (DFDs)
+to understand system processes, data movement, and interactions thoroughly.
+Marks Distribution:
+• DFD Creation & Analysis – 40
+• Demo / Flow Explanation – 40
+• Documentation – 20
+Tasks
+Marks Distribution:
+• DFD Creation & Analysis – 40
+• Demo / Flow Explanation – 40
+• Documentation – 20
+Tasks
+Level-0 DFD Modeling (CO3 | K3| PI: 3.2.1, 3.4.1)
+• Apply DFD concepts to construct a Level-0 Data Flow Diagram for the given
+system.
+• Identify and organize major processes, external entities, and data stores
+involved in the system.
+• Apply modeling rules to record data flows and system boundaries accurately.
+DFD Decomposition and Analysis (CO3 | K4| PI: 3.2.1, 3.4.3)
+• Analyze and divide the Level-0 DFD to develop Level-1 and Level-2 DFDs.
+• Examine process interactions and detect inconsistencies in data flow and
+balancing.
+• Inspect and validate the decomposed DFDs for correctness and completeness.
+• Record observations with appropriate labels and logical explanations.
+Simplification, Optimization, and Validation (CO3 | K4| PI: 3.4.1, 2.2.4)
+• Analyze and simplify the DFDs by removing redundant processes or data
+flows while preserving core functionality.
+• Examine relationships between processes to justify simplification decisions.
+• Draw conclusions on how simplification improves clarity and maintainability of
+the system model.
+Demonstration and Documentation (CO3 | K3| PI: 9.2.1, 2.4.2)
+• Apply communication skills to explain data flow and process interactions
+during demonstration.
+• Analyze and interpret DFD outputs using appropriate tools or diagramming
+software.
+• Document all diagrams, assumptions, and justifications clearly in the lab
+record.
+
+This is SWE assignment 1,2,3.
