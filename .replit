@@ -5,7 +5,7 @@ integrations = ["python_gemini_ai_integrations:1.0.0"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["c-ares", "cargo", "grpc", "libiconv", "libxcrypt", "openssl", "pgadmin4", "pkg-config", "rustc", "zlib"]
+packages = ["c-ares", "cargo", "grpc", "libiconv", "libxcrypt", "openssl", "pgadmin4", "pkg-config", "rustc", "xcodebuild", "zlib"]
 
 [workflows]
 runButton = "Project"

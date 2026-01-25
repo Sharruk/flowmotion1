@@ -26,3 +26,5 @@ grpcio==1.68.1
 apscheduler
 django-apscheduler
 python-docx
+docx
+lxml
