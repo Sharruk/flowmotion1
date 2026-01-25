@@ -1,0 +1,175 @@
+You are a senior Software Engineering reviewer writing O-grade (Outstanding) academic documentation for a final-stage completed project.
+
+TASK:
+Rewrite and significantly improve the given documentation for the project **“FlowMotion: Intelligent Habit & Routine Management System”** as if the project is **fully implemented, tested, and finalized**, not a prototype.
+
+IMPORTANT CONTEXT:
+- This is a Software Engineering Lab Record submission
+- 25+ teams submit similar documentation
+- Only top 3 teams receive O grade
+- Documentation must look mature, industry-aligned, and academically strong
+- This is a Linux-based full-stack Django project
+- Do NOT mention “future work”, “planned”, “can be extended”, or “prototype”
+- Write confidently as if everything already exists and works
+
+--------------------------------------------------
+DOCUMENTATION EXPECTATIONS (VERY IMPORTANT)
+--------------------------------------------------
+
+1) Elevate the writing quality to **final-year / industry-level**
+2) Add **clarity, justification, and engineering rationale**
+3) Improve structure, flow, and terminology
+4) Add subtle complexity and depth WITHOUT exaggeration
+5) Keep everything realistic and technically correct
+6) Avoid buzzwords unless properly explained
+7) Maintain academic tone (clear, formal, confident)
+
+--------------------------------------------------
+STRUCTURE TO FOLLOW
+--------------------------------------------------
+
+Rewrite the documentation using the following refined structure:
+
+--------------------------------------------------
+EXPERIMENT 1:
+PROBLEM IDENTIFICATION, REQUIREMENTS ANALYSIS,
+SYSTEM ARCHITECTURE & IMPLEMENTATION
+--------------------------------------------------
+
+1. Problem Identification
+- Clearly explain the real-world problem for Linux desktop users
+- Justify why existing mobile-first solutions are insufficient
+- Emphasize productivity loss, context switching, and notification fatigue
+- Clearly position FlowMotion as a **desktop-native solution**
+
+2. Objectives
+- List 4–6 precise, outcome-driven objectives
+- Each objective must be measurable and technical
+
+3. Requirements Analysis
+
+3.1 Functional Requirements
+- Present in a clean table
+- Each requirement must be concise and implementation-focused
+
+3.2 Non-Functional Requirements
+- Include performance, scalability, reliability, usability, maintainability, and security
+- Briefly justify each requirement
+
+4. System Architecture
+- Explain why Django MVT was chosen
+- Describe separation of concerns clearly
+- Explain interaction between frontend, backend, scheduler, AI layer, and OS
+
+5. Technology Stack Justification
+- Backend: Django + Python
+- Database: SQLite
+- Frontend: HTML/CSS/JS
+- AI: Gemini API
+- Notifications: notify-send
+- Charts: Chart.js
+For EACH technology, explain **why it was chosen** (lightweight, local execution, Linux compatibility, learning curve, etc.)
+
+6. Module Description
+- Authentication Module
+- Habit Management Module
+- Scheduling & Notification Module
+- AI Feedback Engine
+- Analytics & Visualization Module
+- Learning & Adaptation Module
+
+--------------------------------------------------
+EXPERIMENT 2:
+SOFTWARE REQUIREMENTS SPECIFICATION (SRS)
+--------------------------------------------------
+
+1. Product Perspective
+- Position FlowMotion as a standalone intelligent desktop assistant
+- Mention modularity and extensibility
+
+2. Operating Environment
+- Linux (Ubuntu/NixOS)
+- Python 3.9+
+- Django 4.x
+- SQLite3
+
+3. Design Constraints
+- Local execution
+- Linux notification dependency
+- Academic evaluation constraints
+
+4. Assumptions and Dependencies
+- User availability
+- OS notification support
+- Internet access for AI features
+
+5. Requirements Traceability Matrix
+- Map Functional Requirements → Django modules/views/services
+- Present in a clean table
+
+--------------------------------------------------
+EXPERIMENT 3:
+SYSTEM DESIGN & DATA FLOW DIAGRAMS
+--------------------------------------------------
+
+1. Level-0 DFD
+- Describe system interaction at a high level
+
+2. Level-1 DFD
+- Break into authentication, habit logic, scheduling, AI feedback, analytics
+
+3. Data Storage Design
+- Explain database schema relationships
+- Explain why model inheritance was used
+
+4. Validation & Consistency
+- Explain how data integrity is maintained
+- Explain how missed/completed states propagate correctly
+
+--------------------------------------------------
+IMPLEMENTATION DETAILS
+--------------------------------------------------
+
+- Explain how APScheduler handles background jobs
+- Explain notify-send integration using subprocess
+- Explain AI prompt handling and response parsing
+- Explain streak calculation logic
+- Explain adaptive reminder timing logic
+
+--------------------------------------------------
+TESTING & VALIDATION
+--------------------------------------------------
+
+- Unit testing of models and views
+- Manual testing of notification delivery
+- Validation of streak calculations
+- AI response sanity checks
+
+--------------------------------------------------
+RESULTS & OBSERVATIONS
+--------------------------------------------------
+
+- Describe system behavior after continuous use
+- Mention improved consistency and reduced missed habits
+- Highlight emotional engagement and usability
+
+--------------------------------------------------
+CONCLUSION
+--------------------------------------------------
+
+Write a strong conclusion emphasizing:
+- Successful application of Software Engineering principles
+- Practical usability on Linux systems
+- Clear academic and technical value
+
+--------------------------------------------------
+FINAL INSTRUCTIONS
+--------------------------------------------------
+
+- Rewrite the entire document in one coherent flow
+- Improve language, structure, and technical depth
+- Do NOT shorten — expand where needed
+- Do NOT change project scope
+- Do NOT introduce new features
+- Make this document clearly superior to average submissions
+- Output ONLY the final rewritten documentation

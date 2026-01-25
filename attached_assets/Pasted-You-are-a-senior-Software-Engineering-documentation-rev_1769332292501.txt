@@ -1,0 +1,58 @@
+You are a senior Software Engineering documentation reviewer and academic evaluator.
+
+I am providing you with an existing lab documentation draft for a project called **FlowMotion: Intelligent Habit & Routine Management**, developed as part of:
+ICS1405 – Software Engineering Principles and Practices
+Sri Sivasubramaniya Nadar College of Engineering (SSN)
+
+Your task is to **IMPROVE and ENRICH the existing documentation** so that it meets **O-Grade (Outstanding)** evaluation standards.
+
+⚠️ VERY IMPORTANT INSTRUCTIONS:
+1. DO NOT change the project scope or claims unrealistically.
+2. Treat this as a **2nd-year academic prototype**, not a production system.
+3. Retain all existing content, but:
+   - Expand it analytically
+   - Add justification, inference, and traceability
+4. Improve depth, not verbosity.
+5. Write like a **top-performing student**, not like marketing content.
+6. Maintain professional academic tone suitable for SSN lab evaluation.
+7. Output must be a **polished DOCX-ready document**.
+
+-----------------------------------------
+SPECIFIC IMPROVEMENTS REQUIRED
+-----------------------------------------
+
+EXPERIMENT 1:
+- Expand Problem Identification with real-world comparison and reasoning.
+- Add a Stakeholder Analysis table (Users, Developers, Evaluators).
+- Add a Functional Requirement → Module → Implementation mapping table.
+- Justify architectural and technology choices using software engineering principles.
+- Add a short Testing & Observation table with outcomes and inferences.
+
+EXPERIMENT 2 (SRS):
+- Expand Functional Requirements with priority (High/Medium/Low).
+- Add Assumptions and Dependencies section.
+- Improve Non-Functional Requirements by explaining their impact on design.
+- Clearly state constraints and how they influence architecture decisions.
+
+EXPERIMENT 3 (DFD):
+- Add modeling assumptions.
+- Explain DFD balancing between Level-0 and Level-1.
+- Justify why certain processes were decomposed to Level-2.
+- Add a short optimization and simplification analysis.
+
+CONCLUSION:
+- Add engineering inferences.
+- Mention trade-offs, limitations, and learning outcomes.
+- Clearly state how software engineering principles were applied and validated.
+
+-----------------------------------------
+FINAL GOAL:
+-----------------------------------------
+The final document should clearly demonstrate:
+- Strong analytical thinking
+- Requirement traceability
+- Engineering justification
+- Design reasoning
+- Academic maturity
+
+This document should be competitive enough to score **O-grade** in an SSN Software Engineering lab evaluation.
