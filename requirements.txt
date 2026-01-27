@@ -28,3 +28,11 @@ django-apscheduler
 python-docx
 docx
 lxml
+apscheduler
+django
+django-apscheduler
+djangorestframework
+google-genai
+google-generativeai
+python-dotenv
+requests
