@@ -90,7 +90,17 @@
         form.onsubmit = function(e) {
             if (!checkbox.checked) {
                 e.preventDefault();
-                alert('Please accept the Terms and Conditions to continue.');
+                
+                // Remove existing validation if any
+                const existingVal = document.getElementById('tc_validation');
+                if (existingVal) existingVal.remove();
+
+                const validationMsg = document.createElement('div');
+                validationMsg.id = 'tc_validation';
+                validationMsg.className = 'error tc-validation-msg';
+                validationMsg.textContent = 'Please accept the Terms and Conditions to continue.';
+                checkbox.parentElement.after(validationMsg);
+                
                 return false;
             }
         };

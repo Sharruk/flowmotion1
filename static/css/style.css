@@ -262,8 +262,10 @@ body {
     cursor: pointer;
 }
 
-.close-modal:hover {
-    color: var(--danger);
+.tc-validation-msg {
+    margin-top: 5px;
+    margin-bottom: 15px;
+    font-weight: 500;
 }
 
 .auth-link {
