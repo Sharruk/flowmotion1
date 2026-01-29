@@ -104,10 +104,12 @@
 
         // Scroll logic with tolerance
         tcBody.addEventListener('scroll', function() {
-            const tolerance = 5;
-            const isAtBottom = tcBody.scrollHeight - tcBody.scrollTop <= tcBody.clientHeight + tolerance;
+            // Check if user has scrolled to the very bottom
+            // Using a slightly larger tolerance for reliable detection
+            const isAtBottom = tcBody.scrollHeight - tcBody.scrollTop <= tcBody.clientHeight + 10;
             if (isAtBottom) {
                 modalAccept.disabled = false;
+                modalAccept.classList.remove('btn-disabled'); // If using specific disabled class
                 modalAccept.title = "Click to accept and close";
             }
         });
