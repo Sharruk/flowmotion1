@@ -1,0 +1,62 @@
+You are a senior frontend engineer improving an existing login page UI.
+
+TASK:
+Fix the “Terms and Conditions” interaction to behave like a professional production application.
+
+CURRENT PROBLEMS:
+- Clicking “Terms and Conditions” does not open a proper dialog
+- The checkbox is visually misaligned (appears above text instead of left)
+- Users can tick the checkbox without reading the terms
+- There is no enforced scroll-to-accept behavior
+
+REQUIRED CHANGES (MANDATORY):
+
+1) Checkbox Placement
+- Place the checkbox to the LEFT of the text:
+  “I agree to the Terms and Conditions”
+- Align it horizontally like standard signup forms
+- Clicking the label text should toggle the checkbox
+
+2) Modal Dialog for Terms
+- Clicking “Terms and Conditions” must open a SMALL centered modal dialog
+- The background page must be dimmed (overlay)
+- The modal must NOT be full-screen
+- Include a close (✕) icon at the top-right
+
+3) Scroll-to-Accept Enforcement
+- The modal must contain scrollable Terms content
+- The “Accept & Continue” button must be DISABLED initially
+- Enable the button ONLY after the user scrolls to the bottom
+- This must be enforced via JavaScript (not visual only)
+
+4) Acceptance Logic
+- Clicking “Accept & Continue” should:
+  - Close the modal
+  - Automatically check the “I agree” checkbox
+- Closing the modal without accepting must NOT check the box
+
+5) Login Button Protection
+- Disable the Login button until:
+  - Username is filled
+  - Password is filled
+  - Terms checkbox is checked
+- Show a subtle inline validation message if Login is clicked without acceptance
+
+6) UI/UX Constraints
+- Do NOT change existing layout, colors, or fonts
+- Use only HTML, CSS, and Vanilla JavaScript
+- Keep the solution simple, readable, and academic-project appropriate
+
+REFERENCE BEHAVIOR:
+Match the UX pattern of standard signup forms where:
+- Terms open in a modal
+- User must scroll and explicitly accept
+- Checkbox cannot be bypassed
+
+FINAL OUTPUT REQUIREMENTS:
+- Modify existing files only (do not rewrite the whole page)
+- Ensure clean, working interaction
+- No console errors
+- No external libraries
+
+Implement this fully and correctly.
