@@ -3,12 +3,77 @@
 {% block title %}Login - FlowMotion{% endblock %}
 
 {% block content %}
+<style>
+    /* INLINE CSS TO ENSURE MODAL BEHAVIOR AND OVERRIDE ANY EXTERNAL CONFLICTS */
+    #tc_modal {
+        display: none;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        background-color: rgba(0, 0, 0, 0.85) !important;
+        z-index: 999999 !important;
+        backdrop-filter: blur(10px);
+        overflow: hidden !important;
+    }
+
+    .modal-dialog-centered {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 90% !important;
+        max-width: 600px !important;
+        height: 80vh !important;
+        background: #ffffff !important;
+        border-radius: 20px !important;
+        box-shadow: 0 40px 100px rgba(0,0,0,0.7) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        z-index: 1000000 !important;
+        border: 1px solid #e2e8f0 !important;
+    }
+
+    .modal-header-custom {
+        padding: 25px 35px !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        background: #f8fafc !important;
+        border-radius: 20px 20px 0 0 !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+
+    .modal-body-custom {
+        flex: 1 !important;
+        overflow-y: auto !important;
+        padding: 35px !important;
+        background: #ffffff !important;
+    }
+
+    .modal-footer-custom {
+        padding: 20px 35px !important;
+        border-top: 1px solid #e2e8f0 !important;
+        background: #f8fafc !important;
+        border-radius: 0 0 20px 20px !important;
+        display: flex !important;
+        justify-content: flex-end !important;
+    }
+
+    .no-scroll-body {
+        overflow: hidden !important;
+        position: fixed !important;
+        width: 100% !important;
+    }
+</style>
+
 <div class="auth-container">
     <div class="auth-card">
         <h1>Welcome to FlowMotion</h1>
         <p class="subtitle">Your intelligent habit tracking companion</p>
         
-        <form method="post" class="auth-form">
+        <form method="post" class="auth-form" id="loginForm">
             {% csrf_token %}
             <div class="form-group">
                 <label for="id_username">Username</label>
@@ -19,46 +84,52 @@
                 <input type="password" name="password" id="id_password" required>
             </div>
             
-            <div class="checkbox-group">
-                <input type="checkbox" id="tc_checkbox" class="tc-checkbox" required>
-                <label for="tc_checkbox" class="tc-label">I agree to the <a href="#" id="tc_link">Terms and Conditions</a></label>
+            <div class="checkbox-group" style="display: flex; align-items: center; gap: 10px; margin: 20px 0;">
+                <input type="checkbox" id="tc_checkbox" class="tc-checkbox" required style="width: 20px; height: 20px; cursor: pointer;">
+                <label for="tc_checkbox" class="tc-label" style="margin: 0; cursor: pointer; font-size: 0.95rem;">
+                    I agree to the <a href="#" id="tc_link" style="color: #6366f1; text-decoration: underline; font-weight: 500;">Terms and Conditions</a>
+                </label>
             </div>
 
-            <button type="submit" id="login_btn" class="btn btn-primary" disabled title="Please accept Terms and Conditions to login">Login</button>
+            <button type="submit" id="login_btn" class="btn btn-primary btn-block" disabled style="width: 100%;" title="Please fill all fields and accept Terms and Conditions">Login</button>
         </form>
         
         <p class="auth-link">Don't have an account? <a href="{% url 'register' %}">Register</a></p>
     </div>
 </div>
 
-<!-- Terms and Conditions Modal -->
-<div id="tc_modal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Terms and Conditions</h2>
-            <span class="close-modal">&times;</span>
+<!-- Modal defined at the bottom to ensure it's not nested inside other containers -->
+<div id="tc_modal">
+    <div class="modal-dialog-centered">
+        <div class="modal-header-custom">
+            <h2 style="margin: 0; color: #6366f1; font-size: 1.6rem; font-weight: 700;">Terms and Conditions</h2>
+            <span id="close_modal_icon" style="font-size: 35px; cursor: pointer; color: #64748b; line-height: 1;">&times;</span>
         </div>
-        <div class="modal-body" id="tc_body">
-            <h3>1. Data Privacy</h3>
-            <p>FlowMotion is an academic prototype. Your data is stored locally for tracking purposes and is not shared with third parties.</p>
+        <div class="modal-body-custom" id="tc_body">
+            <h3 style="color: #1e293b; margin-top: 0;">1. Data Privacy</h3>
+            <p>FlowMotion is an academic prototype. Your data is stored locally for tracking purposes and is not shared with third parties. We value your privacy and ensure that all habit data remains strictly within your personal workspace.</p>
             
-            <h3>2. Usage</h3>
-            <p>This system is intended for personal habit tracking. Users are responsible for their own data entry and routine management.</p>
+            <h3>2. Usage Policy</h3>
+            <p>This system is intended for personal habit tracking. Users are responsible for their own data entry and routine management. The AI-generated feedback is for motivational purposes only and should not be substituted for professional guidance.</p>
             
             <h3>3. No Liability</h3>
-            <p>The developers of FlowMotion provide this tool "as is" and are not liable for any missed habits, routines, or productivity outcomes.</p>
+            <p>The developers of FlowMotion provide this tool "as is" and are not liable for any missed habits, routines, or productivity outcomes. Use this application as a supportive tool for your daily discipline.</p>
             
             <h3>4. Linux Environment</h3>
-            <p>This application is designed specifically for Linux desktop environments using native notification services.</p>
+            <p>This application is designed specifically for Linux desktop environments using native notification services (`notify-send`). Ensure your system environment supports these features for the full FlowMotion experience.</p>
             
             <h3>5. User Conduct</h3>
-            <p>Users shall not attempt to reverse engineer the scheduling system or interfere with background processes.</p>
+            <p>Users shall not attempt to reverse engineer the scheduling system or interfere with background processes. Any misuse of the integrated AI features may lead to account restrictions.</p>
             
-            <h3>6. Academic Use</h3>
-            <p>This project is for educational purposes only. It is not intended for commercial use.</p>
+            <h3>6. Academic Use Only</h3>
+            <p>This project is for educational purposes as part of a Software Engineering lab assignment. It is not intended for commercial distribution or large-scale production use.</p>
+            
+            <p style="margin-top: 30px; font-weight: 600; color: #6366f1; background: #eef2ff; padding: 15px; border-radius: 10px; text-align: center;">
+                Please scroll to the very bottom to enable the "Accept & Continue" button.
+            </p>
         </div>
-        <div class="modal-footer">
-            <button id="modal_accept_btn" class="btn btn-primary" disabled>Accept & Continue</button>
+        <div class="modal-footer-custom">
+            <button id="modal_accept_btn" class="btn btn-primary" disabled style="padding: 12px 30px; font-weight: 600;">Accept & Continue</button>
         </div>
     </div>
 </div>
@@ -72,8 +143,8 @@
         const tcLink = document.getElementById('tc_link');
         const modal = document.getElementById('tc_modal');
         const tcBody = document.getElementById('tc_body');
-        const closeModal = document.querySelector('.close-modal');
-        const modalAccept = document.getElementById('modal_accept_btn');
+        const closeModalIcon = document.getElementById('close_modal_icon');
+        const modalAcceptBtn = document.getElementById('modal_accept_btn');
 
         function validateForm() {
             const isUsernameFilled = usernameInput.value.trim() !== '';
@@ -92,47 +163,46 @@
         passwordInput.addEventListener('input', validateForm);
         checkbox.addEventListener('change', validateForm);
 
-        // Show modal
+        // Open Modal
         tcLink.addEventListener('click', function(e) {
             e.preventDefault();
             modal.style.display = 'block';
-            document.body.classList.add('no-scroll');
+            document.body.classList.add('no-scroll-body');
             tcBody.scrollTop = 0;
-            modalAccept.disabled = true;
-            modalAccept.title = "Please scroll to the bottom to accept";
+            modalAcceptBtn.disabled = true;
+            modalAcceptBtn.title = "Please scroll to the bottom to accept";
         });
 
-        // Scroll logic with tolerance
+        // Detect Scroll to Bottom
         tcBody.addEventListener('scroll', function() {
-            // Check if user has scrolled to the very bottom
-            // Using a slightly larger tolerance for reliable detection
-            const isAtBottom = tcBody.scrollHeight - tcBody.scrollTop <= tcBody.clientHeight + 10;
+            // Using a tolerance to handle floating point issues in some browsers
+            const threshold = 15; 
+            const isAtBottom = (tcBody.scrollHeight - tcBody.scrollTop) <= (tcBody.clientHeight + threshold);
+            
             if (isAtBottom) {
-                modalAccept.disabled = false;
-                modalAccept.classList.remove('btn-disabled'); // If using specific disabled class
-                modalAccept.title = "Click to accept and close";
+                modalAcceptBtn.disabled = false;
+                modalAcceptBtn.title = "Click to agree and proceed";
             }
         });
 
-        // Modal Acceptance
-        modalAccept.onclick = function() {
+        // Accept Logic
+        modalAcceptBtn.onclick = function() {
             checkbox.checked = true;
             modal.style.display = 'none';
-            document.body.classList.remove('no-scroll');
+            document.body.classList.remove('no-scroll-body');
             validateForm();
         };
 
-        // Hide modal
-        closeModal.onclick = () => {
+        // Close Logic
+        closeModalIcon.onclick = function() {
             modal.style.display = 'none';
-            document.body.classList.remove('no-scroll');
+            document.body.classList.remove('no-scroll-body');
         };
-        
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                // Clicking background overlay does NOT close modal as per requirement
-                // modal.style.display = 'none';
-                // document.body.classList.remove('no-scroll');
+
+        // Safety: ensure background click doesn't close it
+        modal.onclick = function(e) {
+            if (e.target === modal) {
+                // Don't close
             }
         };
     });
