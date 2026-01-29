@@ -19,11 +19,9 @@
                 <input type="password" name="password" id="id_password" required>
             </div>
             
-            <div class="form-group checkbox-group">
-                <input type="checkbox" id="tc_checkbox" class="tc-checkbox">
-                <label for="tc_checkbox" class="tc-label">
-                    I agree to the <a href="#" id="tc_link">Terms and Conditions</a>
-                </label>
+            <div class="checkbox-group">
+                <input type="checkbox" id="tc_checkbox" class="tc-checkbox" required>
+                <label for="tc_checkbox" class="tc-label">I agree to the <a href="#" id="tc_link">Terms and Conditions</a></label>
             </div>
 
             <button type="submit" id="login_btn" class="btn btn-primary" disabled title="Please accept Terms and Conditions to login">Login</button>
@@ -76,12 +74,18 @@
         const tcBody = document.getElementById('tc_body');
         const closeModal = document.querySelector('.close-modal');
         const modalAccept = document.getElementById('modal_accept_btn');
-        const form = document.querySelector('.auth-form');
 
         function validateForm() {
             const isUsernameFilled = usernameInput.value.trim() !== '';
             const isPasswordFilled = passwordInput.value.trim() !== '';
-            loginBtn.disabled = !(isUsernameFilled && isPasswordFilled && checkbox.checked);
+            const isCheckboxChecked = checkbox.checked;
+            loginBtn.disabled = !(isUsernameFilled && isPasswordFilled && isCheckboxChecked);
+            
+            if (loginBtn.disabled) {
+                loginBtn.title = "Please fill all fields and accept Terms and Conditions";
+            } else {
+                loginBtn.title = "";
+            }
         }
 
         usernameInput.addEventListener('input', validateForm);
@@ -94,13 +98,16 @@
             modal.style.display = 'block';
             tcBody.scrollTop = 0;
             modalAccept.disabled = true;
+            modalAccept.title = "Please scroll to the bottom to accept";
         });
 
-        // Scroll logic
+        // Scroll logic with tolerance
         tcBody.addEventListener('scroll', function() {
-            const isAtBottom = tcBody.scrollHeight - tcBody.scrollTop <= tcBody.clientHeight + 1;
+            const tolerance = 5;
+            const isAtBottom = tcBody.scrollHeight - tcBody.scrollTop <= tcBody.clientHeight + tolerance;
             if (isAtBottom) {
                 modalAccept.disabled = false;
+                modalAccept.title = "Click to accept and close";
             }
         });
 
@@ -117,21 +124,6 @@
         window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = 'none';
-            }
-        };
-
-        // Form validation message
-        form.onsubmit = function(e) {
-            if (!checkbox.checked) {
-                e.preventDefault();
-                const existingVal = document.getElementById('tc_validation');
-                if (existingVal) existingVal.remove();
-                const validationMsg = document.createElement('div');
-                validationMsg.id = 'tc_validation';
-                validationMsg.className = 'error tc-validation-msg';
-                validationMsg.textContent = 'Please accept the Terms and Conditions to continue.';
-                checkbox.parentElement.after(validationMsg);
-                return false;
             }
         };
     });
