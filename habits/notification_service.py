@@ -21,16 +21,34 @@ def send_notification(habit, message, action=True):
     ]
     
     if action:
-        # Note: notify-send action support depends on the notification server
-        # We include the URL in the message as a fallback
+        # Fallback URL in message
         url_text = f"\nClick to start: {url}"
         full_message = f"{message}{url_text}"
+        
+        # Check if notify-send version supports --action
+        # Older versions of notify-send do not support --action
+        # We try to use it, but if it fails we fall back to just message
         cmd.extend(['--action', f'open={url}'])
-        # Replace the last element (the message) with the full message
-        cmd[5] = full_message 
+        
+        # Important: The positional index might change if we extend
+        # Let's rebuild the command properly
+        cmd = [
+            'notify-send',
+            '-a', 'FlowMotion',
+            '-i', 'appointment-new',
+            title,
+            full_message
+        ]
+        if action:
+             cmd.extend(['--action', f'open={url}'])
+    
+    # Final check for DISPLAY environment variable which is needed for notify-send
+    env = os.environ.copy()
+    if 'DISPLAY' not in env:
+        env['DISPLAY'] = ':0'
     
     try:
-        subprocess.run(cmd, check=False)
+        subprocess.run(cmd, check=False, env=env)
     except Exception as e:
         print(f"Error sending notification for {habit.name}: {e}")
 
