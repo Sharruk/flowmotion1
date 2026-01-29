@@ -21,7 +21,11 @@ if REPLIT_DEPLOYMENT:
 else:
     ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://*.replit.dev', 'https://*.replit.app']
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.replit.dev',
+    'https://*.replit.app',
+    'https://217acc94-39e9-4e16-b00e-8cefafa5b209-00-3pdxz7drw6ltp.picard.replit.dev'
+]
 
 if REPLIT_DEPLOYMENT:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
