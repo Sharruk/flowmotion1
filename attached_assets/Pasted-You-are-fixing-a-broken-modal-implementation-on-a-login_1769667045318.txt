@@ -1,0 +1,68 @@
+You are fixing a broken modal implementation on a login page.
+
+CRITICAL BUG:
+The “Terms and Conditions” content is rendering inline at the bottom of the page instead of appearing as a modal dialog overlay.
+
+THIS IS UNACCEPTABLE.
+Fix it properly.
+
+MANDATORY REQUIREMENTS (DO NOT IGNORE):
+
+1) True Modal Behavior
+- The Terms and Conditions must appear in a CENTERED MODAL DIALOG
+- The modal must use:
+  position: fixed
+  top: 50%
+  left: 50%
+  transform: translate(-50%, -50%)
+  z-index higher than the page
+- The modal must NOT push page content down
+- The modal must float above the page
+
+2) Background Overlay
+- Add a semi-transparent dark overlay behind the modal
+- Overlay must cover the entire viewport
+- Background page scrolling must be DISABLED while modal is open
+- Clicking outside the modal must NOT close it
+
+3) Scrollable Modal Content
+- Modal body must have a fixed height
+- Terms text must be scrollable INSIDE the modal only
+- Page behind must remain static
+
+4) Scroll-to-Accept Enforcement
+- “Accept & Continue” button must be DISABLED initially
+- Enable the button ONLY when the user scrolls to the bottom of the modal content
+- This must be enforced via JavaScript scroll detection
+
+5) Acceptance Logic
+- Clicking “Accept & Continue” must:
+  - Close the modal
+  - Automatically check the “I agree to the Terms and Conditions” checkbox
+- Closing the modal via ✕ must NOT check the checkbox
+
+6) Checkbox Layout
+- Checkbox must be LEFT of the text
+- Text click toggles checkbox
+- Must match standard signup UX (like professional sites)
+
+7) Login Button Guard
+- Login button must remain disabled unless:
+  - Username filled
+  - Password filled
+  - Terms checkbox checked
+- Show subtle inline validation if attempted without acceptance
+
+STRICT RULES:
+- Do NOT render Terms inline in the page
+- Do NOT use full-page layouts
+- Do NOT use external libraries
+- Use only HTML, CSS, and Vanilla JS
+- Modify existing files only
+- Ensure no layout regression elsewhere
+
+GOAL:
+The Terms must behave like a real modal dialog,
+not like a section appended to the page.
+
+Fix this completely and correctly.
