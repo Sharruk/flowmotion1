@@ -18,10 +18,82 @@
                 <label for="id_password">Password</label>
                 <input type="password" name="password" id="id_password" required>
             </div>
-            <button type="submit" class="btn btn-primary">Login</button>
+            
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="tc_checkbox" class="tc-checkbox">
+                <label for="tc_checkbox" class="tc-label">
+                    I agree to the <a href="#" id="tc_link">Terms and Conditions</a>
+                </label>
+            </div>
+
+            <button type="submit" id="login_btn" class="btn btn-primary" disabled title="Please accept Terms and Conditions to login">Login</button>
         </form>
         
         <p class="auth-link">Don't have an account? <a href="{% url 'register' %}">Register</a></p>
     </div>
 </div>
+
+<!-- Terms and Conditions Modal -->
+<div id="tc_modal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Terms and Conditions</h2>
+        <div class="modal-body">
+            <h3>1. Data Privacy</h3>
+            <p>FlowMotion is an academic prototype. Your data is stored locally for tracking purposes and is not shared with third parties.</p>
+            
+            <h3>2. Usage</h3>
+            <p>This system is intended for personal habit tracking. Users are responsible for their own data entry and routine management.</p>
+            
+            <h3>3. No Liability</h3>
+            <p>The developers of FlowMotion provide this tool "as is" and are not liable for any missed habits, routines, or productivity outcomes.</p>
+            
+            <h3>4. Linux Environment</h3>
+            <p>This application is designed specifically for Linux desktop environments using native notification services.</p>
+        </div>
+        <button id="modal_accept_btn" class="btn btn-primary">Close and Continue</button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkbox = document.getElementById('tc_checkbox');
+        const loginBtn = document.getElementById('login_btn');
+        const tcLink = document.getElementById('tc_link');
+        const modal = document.getElementById('tc_modal');
+        const closeModal = document.querySelector('.close-modal');
+        const modalAccept = document.getElementById('modal_accept_btn');
+        const form = document.querySelector('.auth-form');
+
+        // Toggle login button based on checkbox
+        checkbox.addEventListener('change', function() {
+            loginBtn.disabled = !this.checked;
+        });
+
+        // Show modal
+        tcLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            modal.style.display = 'block';
+        });
+
+        // Hide modal
+        closeModal.onclick = () => modal.style.display = 'none';
+        modalAccept.onclick = () => modal.style.display = 'none';
+        
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        // Form validation
+        form.onsubmit = function(e) {
+            if (!checkbox.checked) {
+                e.preventDefault();
+                alert('Please accept the Terms and Conditions to continue.');
+                return false;
+            }
+        };
+    });
+</script>
 {% endblock %}
