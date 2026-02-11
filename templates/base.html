@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
     {% if user.is_authenticated %}
     <nav class="navbar">
@@ -23,7 +25,19 @@
         </ul>
     </nav>
     {% endif %}
-    
+
+    <!-- Notification Permission Banner -->
+    {% if user.is_authenticated %}
+    <div id="notification-banner"
+        style="display:none; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 14px 24px; text-align: center; font-size: 0.95rem; cursor: pointer; position: relative; z-index: 100; box-shadow: 0 2px 10px rgba(99,102,241,0.3);">
+        <span>🔔 <strong>Enable Notifications</strong> to get habit reminders on your desktop!</span>
+        <button id="enable-notifications-btn"
+            style="background: white; color: #6366f1; border: none; padding: 6px 18px; border-radius: 20px; font-weight: 600; margin-left: 12px; cursor: pointer; font-size: 0.9rem;">Allow</button>
+        <button id="dismiss-notification-banner"
+            style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.5); padding: 6px 14px; border-radius: 20px; font-weight: 500; margin-left: 8px; cursor: pointer; font-size: 0.85rem;">Later</button>
+    </div>
+    {% endif %}
+
     <main class="container">
         {% if messages %}
         <div class="messages">
@@ -32,11 +46,125 @@
             {% endfor %}
         </div>
         {% endif %}
-        
+
         {% block content %}{% endblock %}
     </main>
-    
+
     <script src="{% static 'js/main.js' %}"></script>
+
+    {% if user.is_authenticated %}
+    <script>
+        // ====== FlowMotion Notification System ======
+        (function () {
+            // Register Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                    .then(function (reg) {
+                        console.log('[FlowMotion] Service Worker registered:', reg.scope);
+                    })
+                    .catch(function (err) {
+                        console.log('[FlowMotion] SW registration failed, using page-level notifications:', err);
+                    });
+            }
+
+            // Show notification banner if permission not yet granted
+            if ('Notification' in window) {
+                if (Notification.permission === 'default') {
+                    var banner = document.getElementById('notification-banner');
+                    if (banner) banner.style.display = 'block';
+                } else if (Notification.permission === 'granted') {
+                    // Already granted — schedule notifications
+                    scheduleNotifications();
+                }
+            }
+
+            // Handle "Allow" button click
+            var enableBtn = document.getElementById('enable-notifications-btn');
+            if (enableBtn) {
+                enableBtn.addEventListener('click', function () {
+                    Notification.requestPermission().then(function (result) {
+                        var banner = document.getElementById('notification-banner');
+                        if (result === 'granted') {
+                            if (banner) banner.style.display = 'none';
+                            // Show a test notification
+                            new Notification('FlowMotion 🎯', {
+                                body: 'Notifications enabled! You\'ll receive habit reminders here.',
+                                icon: '/static/img/flowmotion-icon.png'
+                            });
+                            scheduleNotifications();
+                        } else {
+                            if (banner) banner.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Handle "Later" button
+            var dismissBtn = document.getElementById('dismiss-notification-banner');
+            if (dismissBtn) {
+                dismissBtn.addEventListener('click', function () {
+                    var banner = document.getElementById('notification-banner');
+                    if (banner) banner.style.display = 'none';
+                });
+            }
+
+            // Fetch reminders from backend and schedule browser notifications
+            function scheduleNotifications() {
+                fetch('/api/reminders/')
+                    .then(function (response) { return response.json(); })
+                    .then(function (data) {
+                        if (!data.reminders || data.reminders.length === 0) {
+                            console.log('[FlowMotion] No upcoming reminders');
+                            return;
+                        }
+
+                        data.reminders.forEach(function (reminder) {
+                            console.log('[FlowMotion] Scheduling: ' + reminder.name + ' in ' + (reminder.delay_ms / 1000) + 's');
+
+                            // Try Service Worker first, fall back to page-level notifications
+                            if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                                navigator.serviceWorker.controller.postMessage({
+                                    type: 'SCHEDULE_NOTIFICATION',
+                                    title: '🎯 FlowMotion: ' + reminder.name,
+                                    body: reminder.question + '\n⏰ Reminder at ' + reminder.reminder_time,
+                                    url: reminder.url,
+                                    delay: reminder.delay_ms
+                                });
+                            } else {
+                                // Fallback: use page-level setTimeout + Notification API
+                                setTimeout(function () {
+                                    if (Notification.permission === 'granted') {
+                                        var n = new Notification('🎯 FlowMotion: ' + reminder.name, {
+                                            body: reminder.question + '\n⏰ Reminder at ' + reminder.reminder_time,
+                                            icon: '/static/img/flowmotion-icon.png',
+                                            tag: 'habit-' + reminder.id,
+                                            requireInteraction: true
+                                        });
+                                        n.onclick = function () {
+                                            window.focus();
+                                            window.location.href = reminder.url;
+                                        };
+                                    }
+                                }, reminder.delay_ms);
+                            }
+                        });
+                    })
+                    .catch(function (err) {
+                        console.log('[FlowMotion] Could not fetch reminders:', err);
+                    });
+            }
+
+            // Re-schedule every 5 minutes
+            setInterval(function () {
+                if (Notification.permission === 'granted') {
+                    scheduleNotifications();
+                }
+            }, 5 * 60 * 1000);
+        })();
+    </script>
+    {% endif %}
+
     {% block extra_js %}{% endblock %}
 </body>
+
 </html>

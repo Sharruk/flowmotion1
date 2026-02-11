@@ -1,17 +1,32 @@
 import subprocess
 import os
+import platform
 from datetime import datetime, timedelta
 from django.utils import timezone
 from .models import Habit, HabitResponse
 
+
 def send_notification(habit, message, action=True):
     """
-    Sends a Linux desktop notification using notify-send.
-    Uses --action to make it clickable if required.
+    Sends a desktop notification.
+    - On Linux: uses notify-send
+    - On Windows: uses PowerShell toast notification
+    - Falls back silently if neither works
     """
     title = f"FlowMotion: {habit.name}"
     url = f"http://127.0.0.1:8000/habits/{habit.id}/"
-    
+    system = platform.system()
+
+    if system == 'Linux':
+        _send_linux_notification(title, message, url, action)
+    elif system == 'Windows':
+        _send_windows_notification(title, message)
+    else:
+        print(f"Notification skipped (unsupported OS: {system}): {title}")
+
+
+def _send_linux_notification(title, message, url, action):
+    """Send notification via Linux notify-send."""
     cmd = [
         'notify-send',
         '-a', 'FlowMotion',
@@ -19,19 +34,9 @@ def send_notification(habit, message, action=True):
         title,
         message
     ]
-    
+
     if action:
-        # Fallback URL in message
-        url_text = f"\nClick to start: {url}"
-        full_message = f"{message}{url_text}"
-        
-        # Check if notify-send version supports --action
-        # Older versions of notify-send do not support --action
-        # We try to use it, but if it fails we fall back to just message
-        cmd.extend(['--action', f'open={url}'])
-        
-        # Important: The positional index might change if we extend
-        # Let's rebuild the command properly
+        full_message = f"{message}\nClick to start: {url}"
         cmd = [
             'notify-send',
             '-a', 'FlowMotion',
@@ -39,18 +44,48 @@ def send_notification(habit, message, action=True):
             title,
             full_message
         ]
-        if action:
-             cmd.extend(['--action', f'open={url}'])
-    
-    # Final check for DISPLAY environment variable which is needed for notify-send
+        cmd.extend(['--action', f'open={url}'])
+
     env = os.environ.copy()
     if 'DISPLAY' not in env:
         env['DISPLAY'] = ':0'
-    
+
     try:
         subprocess.run(cmd, check=False, env=env)
     except Exception as e:
-        print(f"Error sending notification for {habit.name}: {e}")
+        print(f"Linux notification error: {e}")
+
+
+def _send_windows_notification(title, message):
+    """Send notification via Windows PowerShell toast."""
+    try:
+        ps_script = f"""
+        [Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] | Out-Null
+        [Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom, ContentType = WindowsRuntime] | Out-Null
+
+        $template = @"
+        <toast>
+            <visual>
+                <binding template="ToastGeneric">
+                    <text>{title}</text>
+                    <text>{message}</text>
+                </binding>
+            </visual>
+        </toast>
+"@
+
+        $xml = New-Object Windows.Data.Xml.Dom.XmlDocument
+        $xml.LoadXml($template)
+        $toast = [Windows.UI.Notifications.ToastNotification]::new($xml)
+        [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier("FlowMotion").Show($toast)
+        """
+        subprocess.run(
+            ['powershell', '-Command', ps_script],
+            check=False, capture_output=True, timeout=5
+        )
+    except Exception as e:
+        print(f"Windows notification error: {e}")
+
 
 def check_and_send_notifications():
     """
@@ -59,51 +94,37 @@ def check_and_send_notifications():
     """
     now = timezone.now()
     today = now.date()
-    current_time = now.time()
-    
-    # Get active habits with reminders enabled
+
     habits = Habit.objects.filter(status='active', reminder_enabled=True)
-    
+
     for habit in habits:
-        # 1. Check Frequency
-        if habit.frequency == 'weekly':
-            # Assuming we need a way to check which weekday. 
-            # For now, if it's weekly we might need a specific day field.
-            # If not present, we assume daily for this MVP logic.
-            pass
-        
-        # 2. Check Completion Status for today
         completed_today = HabitResponse.objects.filter(
-            habit=habit, 
-            date=today, 
+            habit=habit,
+            date=today,
             completed=True
         ).exists()
-        
+
         if completed_today:
             continue
-            
+
         if not habit.reminder_time:
             continue
 
-        # Calculate time difference
         habit_datetime = datetime.combine(today, habit.reminder_time)
         habit_datetime = timezone.make_aware(habit_datetime)
-        
+
         time_diff = (habit_datetime - now).total_seconds() / 60
-        
-        # 3. Notification Logic
-        
+
         # Pre-Reminder (10 minutes before)
         if 9.5 <= time_diff <= 10.5:
             send_notification(habit, f"⏰ {habit.name} starts in 10 minutes", action=False)
-            
+
         # Main Reminder (At exact time)
         elif -0.5 <= time_diff <= 0.5:
             send_notification(habit, f"▶ Time for {habit.name} – Click to start", action=True)
-            
-        # Missed / Repeat Reminder (After scheduled time, every 10 mins)
+
+        # Missed / Repeat Reminder (every 10 mins after)
         elif time_diff < -0.5:
-            # How many minutes since deadline
             mins_past = abs(time_diff)
-            if mins_past % 10 < 1: # Trigger every 10 minutes
+            if mins_past % 10 < 1:
                 send_notification(habit, f"❌ You missed {habit.name}. Start now?", action=True)

@@ -69,17 +69,24 @@ class HabitResponse(models.Model):
     completed = models.BooleanField(default=False)
     value = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     emotional_state = models.CharField(max_length=20, choices=EMOTIONAL_STATE_CHOICES, default='neutral')
+    feedback_text = models.TextField(blank=True, default='')
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     @property
     def feedback_message(self):
+        if self.feedback_text:
+            return self.feedback_text
         if self.completed:
             return "Encouraging message 😄"
         elif self.emotional_state == 'neutral':
             return "Neutral reminder 😐"
         else:
             return "Supportive message 😢"
+
+    @feedback_message.setter
+    def feedback_message(self, value):
+        self.feedback_text = value
     
     class Meta:
         unique_together = ['habit', 'date']
