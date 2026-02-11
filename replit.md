@@ -49,3 +49,6 @@ python manage.py runserver 0.0.0.0:5000
 - `/habits/create/` - Create new habit
 - `/history/` - History view
 - `/settings/` - User settings
+
+## Background Processes
+Notifications are executed using a background APScheduler process invoking Linux’s notify-send utility. Due to cloud environment limitations, desktop alerts are demonstrated on local Ubuntu systems.
