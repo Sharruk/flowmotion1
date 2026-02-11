@@ -8,7 +8,7 @@ class Command(BaseCommand):
     help = 'Checks for upcoming habits and sends notifications'
 
     def handle(self, *args, **options):
-        now = timezone.now()
+        now = timezone.localtime()
         current_time = now.time()
         ten_mins_later = (now + timedelta(minutes=10)).time()
         
