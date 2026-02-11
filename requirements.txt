@@ -36,3 +36,16 @@ google-genai
 google-generativeai
 python-dotenv
 requests
+apscheduler
+django
+django-apscheduler
+djangorestframework
+google-genai
+google-generativeai
+gunicorn
+lxml
+pydantic
+python-docx
+python-dotenv
+requests
+tenacity
