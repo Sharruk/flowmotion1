@@ -67,6 +67,29 @@ function updateAllCountdowns() {
     const countdowns = document.querySelectorAll('.countdown-timer, #widget-countdown, .countdown');
     
     countdowns.forEach(el => {
+        if (el.id === 'widget-countdown' || el.classList.contains('countdown')) {
+            const startDateStr = el.getAttribute('data-start');
+            const duration = parseInt(el.getAttribute('data-duration'));
+            
+            if (startDateStr && !isNaN(duration)) {
+                const startDate = new Date(startDateStr);
+                const today = new Date();
+                
+                // Reset hours to compare dates only
+                const startDay = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+                const currentDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                
+                const diffTime = currentDay - startDay;
+                const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                
+                let remaining = duration - daysPassed;
+                if (remaining < 0) remaining = 0;
+                
+                el.innerText = remaining;
+                return;
+            }
+        }
+
         const targetTimeStr = el.getAttribute('data-time');
         if (!targetTimeStr) return;
         
@@ -77,24 +100,12 @@ function updateAllCountdowns() {
         
         let diff = target - now;
         
-        // Handle widget-specific display vs general countdown
-        const isWidget = el.id === 'widget-countdown' || el.classList.contains('countdown');
-        
         if (diff < 0) {
-            if (isWidget) {
-                el.innerText = "00:00 remaining";
-                const status = document.getElementById('deadline-status');
-                if (status) status.innerHTML = '<span class="deadline-passed">⏰ Deadline passed</span>';
-            } else {
-                // For general countdowns, show time until tomorrow
-                target.setDate(target.getDate() + 1);
-                diff = target - now;
-                displayTime(el, diff, false);
-            }
-            return;
+            target.setDate(target.getDate() + 1);
+            diff = target - now;
         }
         
-        displayTime(el, diff, isWidget);
+        displayTime(el, diff, false);
     });
 }
 

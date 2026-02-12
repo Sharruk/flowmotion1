@@ -30,6 +30,7 @@ class Habit(models.Model):
     ai_category = models.CharField(max_length=100, blank=True, null=True)
     ai_suggestions = models.JSONField(blank=True, null=True) # Stores tools and links
     ai_estimated_time = models.CharField(max_length=100, blank=True, null=True)
+    duration = models.IntegerField(default=28)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

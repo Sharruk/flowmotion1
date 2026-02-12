@@ -120,6 +120,8 @@ def habit_detail(request, habit_id):
         'completion_rate': round(completion_rate, 1),
         'is_widget_mode': is_widget_mode,
         'widget_exists': widget_exists,
+        'start_date': habit.created_at.date().isoformat(),
+        'duration': habit.duration,
     }
     
     if is_widget_mode:

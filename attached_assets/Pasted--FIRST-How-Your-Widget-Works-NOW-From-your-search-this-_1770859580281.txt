@@ -1,0 +1,235 @@
+🧠 FIRST: How Your Widget Works NOW
+
+From your search, this is important:
+
+#widget-countdown
+.countdown
+updateWidgetCountdown()
+setInterval(updateWidgetCountdown, 60000);
+
+
+This means:
+
+👉 Your widget already uses JavaScript timer
+👉 It calculates time on the browser side
+👉 It is NOT using backend API
+
+So:
+
+If time is wrong → JavaScript logic is wrong
+If it shows 28 always → starting value is wrong
+
+✅ STEP 1 — Find the Widget HTML File
+
+From your result:
+
+<div id="widget-countdown" class="countdown" data-time="{{ habit.
+
+
+So open that file.
+
+In Replit / VS Code:
+
+Press:
+
+Ctrl + Shift + F
+
+
+Search exactly:
+
+id="widget-countdown"
+
+
+Open the file where it is.
+
+It will be something like:
+
+widget_mode.html
+habit_detail.html
+dashboard.html
+
+✅ STEP 2 — Look at This Line Carefully
+
+You will see something like:
+
+<div
+  id="widget-countdown"
+  class="countdown"
+  data-time="{{ habit.remaining_days }}"
+>
+  28
+</div>
+
+
+or:
+
+data-time="{{ habit.duration }}"
+
+
+or:
+
+data-time="28"
+
+
+This data-time is the KEY.
+
+That is where 28 comes from.
+
+🧠 Explanation
+
+JS reads:
+
+data-time="28"
+
+
+Then it says:
+
+👉 Start countdown from 28 days
+
+So if backend sends 28 always → widget never changes.
+
+✅ STEP 3 — Find updateWidgetCountdown() Function
+
+Search:
+
+function updateWidgetCountdown
+
+
+Open it.
+
+You’ll see something like:
+
+function updateWidgetCountdown() {
+    const timerElement = document.getElementById('widget-countdown');
+    const totalDays = parseInt(timerElement.dataset.time);
+
+    let remaining = totalDays - daysPassed;
+
+    timerElement.innerText = remaining;
+}
+
+
+(or similar)
+
+This logic is probably wrong.
+
+✅ STEP 4 — Why It Fails
+
+Your system probably does:
+
+remaining = 28 - 0
+
+
+Because:
+
+❌ daysPassed not saved
+❌ no start date used
+❌ page reload resets
+
+So every reload → back to 28
+
+🎯 Now We Fix It Properly
+
+We will:
+
+✔ Use backend date
+✔ Store start date
+✔ Calculate live difference
+
+✅ STEP 5 — Backend: Send Start Date
+
+In your Django model (Habit):
+
+Open:
+
+models.py
+
+
+Check if you have:
+
+start_date = models.DateField(auto_now_add=True)
+
+
+If not, add:
+
+start_date = models.DateField(default=timezone.now)
+
+
+Migrate if needed.
+
+✅ STEP 6 — Pass Date to Widget
+
+In your view:
+
+Find:
+
+render(request, "...", context)
+
+
+Add:
+
+context["start_date"] = habit.start_date.isoformat()
+context["duration"] = habit.duration  # or 28
+
+
+Example:
+
+return render(request, "widget.html", {
+    "habit": habit,
+    "start_date": habit.start_date.isoformat(),
+    "duration": 28,
+})
+
+✅ STEP 7 — Fix HTML
+
+Now in widget template, change:
+
+OLD ❌
+
+<div id="widget-countdown" data-time="28">
+
+
+NEW ✅
+
+<div
+  id="widget-countdown"
+  data-start="{{ start_date }}"
+  data-duration="{{ duration }}"
+>
+</div>
+
+✅ STEP 8 — Fix JavaScript
+
+Replace updateWidgetCountdown() with this:
+
+function updateWidgetCountdown() {
+    const el = document.getElementById("widget-countdown");
+
+    if (!el) return;
+
+    const startDate = new Date(el.dataset.start);
+    const duration = parseInt(el.dataset.duration);
+
+    const today = new Date();
+
+    const diffTime = today - startDate;
+    const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    let remaining = duration - daysPassed;
+
+    if (remaining < 0) remaining = 0;
+
+    el.innerText = remaining;
+}
+
+updateWidgetCountdown();
+setInterval(updateWidgetCountdown, 60000);
+
+✅ STEP 9 — Restart Server
+
+After all edits:
+
+python manage.py runserver
+
+
+or Replit restart.
