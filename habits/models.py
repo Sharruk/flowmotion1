@@ -79,10 +79,7 @@ class HabitResponse(models.Model):
             return self.feedback_text
         if self.completed:
             return "Encouraging message 😄"
-        elif self.emotional_state == 'neutral':
-            return "Neutral reminder 😐"
-        else:
-            return "Supportive message 😢"
+        return "Neutral reminder 😐"
 
     @feedback_message.setter
     def feedback_message(self, value):

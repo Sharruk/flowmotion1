@@ -35,19 +35,21 @@
                     <h3>{{ item.habit.name }}</h3>
                     <p class="habit-question">{{ item.habit.question }}</p>
                     <div class="habit-streak">
-                        Streak: {{ item.streak.current_streak }} days
+                        Streak: <span id="streak-{{ item.habit.id }}">{{ item.streak.current_streak }}</span> days
                     </div>
                 </div>
                 <div class="habit-actions">
+                    <div id="status-{{ item.habit.id }}">
                     {% if not item.completed_today %}
-                    <form method="post" action="{% url 'habit_respond' item.habit.id %}" class="quick-respond">
+                    <form method="post" action="{% url 'habit_respond' item.habit.id %}" class="habit-response-form" data-habit-id="{{ item.habit.id }}">
                         {% csrf_token %}
                         <input type="hidden" name="completed" value="yes">
                         <button type="submit" class="btn btn-success">Done</button>
                     </form>
                     {% else %}
-                    <span class="completed-badge">Completed</span>
+                    <span class="status-badge completed">✅ Completed</span>
                     {% endif %}
+                    </div>
                     <a href="{% url 'habit_detail' item.habit.id %}" class="btn btn-outline">View</a>
                 </div>
             </div>

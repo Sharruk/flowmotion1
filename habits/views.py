@@ -141,61 +141,82 @@ def create_widget(request, habit_id):
 @login_required
 def habit_respond(request, habit_id):
     if request.method == 'POST':
-        habit = get_object_or_404(Habit, id=habit_id, user=request.user)
-        today = date.today()
-        response, created = HabitResponse.objects.get_or_create(
-            habit=habit, date=today, defaults={'completed': False}
-        )
-        if hasattr(habit, 'measurablehabit'):
-            value = request.POST.get('value', 0)
-            response.value = float(value) if value else 0
-            measurable = habit.measurablehabit
-            if measurable.target_type == 'at_least':
-                response.completed = response.value >= measurable.target_value
-            elif measurable.target_type == 'exactly':
-                response.completed = response.value == measurable.target_value
+        try:
+            habit = get_object_or_404(Habit, id=habit_id, user=request.user)
+            today = date.today()
+            response, created = HabitResponse.objects.get_or_create(
+                habit=habit, date=today, defaults={'completed': False}
+            )
+            
+            if hasattr(habit, 'measurablehabit'):
+                value = request.POST.get('value', 0)
+                try:
+                    response.value = float(value) if value else 0
+                except (ValueError, TypeError):
+                    response.value = 0
+                    
+                measurable = habit.measurablehabit
+                if measurable.target_type == 'at_least':
+                    response.completed = response.value >= measurable.target_value
+                elif measurable.target_type == 'exactly':
+                    response.completed = response.value == measurable.target_value
+                else:
+                    response.completed = response.value <= measurable.target_value
             else:
-                response.completed = response.value <= measurable.target_value
-        else:
-            response.completed = request.POST.get('completed') == 'yes'
-        
-        streak, _ = StreakData.objects.get_or_create(habit=habit)
-        if response.completed:
-            if streak.last_completed == today - timedelta(days=1):
-                streak.current_streak += 1
-            elif streak.last_completed != today:
-                streak.current_streak = 1
-            streak.last_completed = today
-            if streak.current_streak > streak.best_streak:
-                streak.best_streak = streak.current_streak
-        else:
-            streak.current_streak = 0
-        streak.save()
+                response.completed = request.POST.get('completed') == 'yes'
+            
+            streak, _ = StreakData.objects.get_or_create(habit=habit)
+            if response.completed:
+                if streak.last_completed == today - timedelta(days=1):
+                    streak.current_streak += 1
+                elif streak.last_completed != today:
+                    streak.current_streak = 1
+                streak.last_completed = today
+                if streak.current_streak > streak.best_streak:
+                    streak.best_streak = streak.current_streak
+            else:
+                streak.current_streak = 0
+            streak.save()
 
-        # Generate genuine emotional feedback via AI
-        feedback = get_emotional_feedback(habit.name, response.completed, streak.current_streak)
-        response.feedback_message = feedback
-        
-        if response.completed:
-            response.emotional_state = 'happy'
-            # Send Linux desktop notification
-            send_notification(habit, feedback, action=False)
-            messages.success(request, feedback)
-        else:
-            response.emotional_state = 'neutral'
-            messages.info(request, feedback)
-        
-        response.save()
-        
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({
-                'success': True, 
-                'completed': response.completed, 
-                'emotional_state': response.emotional_state, 
-                'current_streak': streak.current_streak,
-                'feedback': feedback
-            })
-        return redirect('habit_detail', habit_id=habit.id)
+            # Generate genuine emotional feedback via AI
+            try:
+                feedback = get_emotional_feedback(habit.name, response.completed, streak.current_streak)
+            except Exception:
+                feedback = "Great job!" if response.completed else "Keep going!"
+                
+            response.feedback_message = feedback
+            
+            if response.completed:
+                response.emotional_state = 'happy'
+                # Send Linux desktop notification
+                try:
+                    send_notification("FlowMotion Reminder", feedback)
+                except Exception:
+                    pass
+                messages.success(request, feedback)
+            else:
+                response.emotional_state = 'neutral'
+                messages.info(request, feedback)
+            
+            response.save()
+            
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.accepts('application/json'):
+                return JsonResponse({
+                    'success': True, 
+                    'completed': response.completed, 
+                    'emotional_state': response.emotional_state, 
+                    'current_streak': streak.current_streak,
+                    'feedback': feedback
+                })
+            return redirect('habit_detail', habit_id=habit.id)
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error in habit_respond: {str(e)}")
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': str(e)}, status=500)
+            messages.error(request, "An error occurred while saving your response.")
+            return redirect('dashboard')
     return redirect('dashboard')
 
 @login_required
