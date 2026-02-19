@@ -9,6 +9,7 @@ urlpatterns = [
     path('habits/<uuid:habit_id>/', views.habit_detail, name='habit_detail'),
     path('habits/<uuid:habit_id>/create_widget/', views.create_widget, name='create_widget'),
     path('habits/<uuid:habit_id>/respond/', views.habit_respond, name='habit_respond'),
+    path('habits/<uuid:habit_id>/acknowledge/', views.acknowledge_habit, name='acknowledge_habit'),
     path('history/', views.history, name='history'),
     path('settings/', views.settings_view, name='settings'),
     path('widget/', views.widget_dashboard, name='widget_dashboard'),

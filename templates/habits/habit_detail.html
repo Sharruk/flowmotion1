@@ -67,6 +67,27 @@
         </section>
 
         <section class="stats-section">
+            <h2>Reminders & Status</h2>
+            <div class="stat-grid">
+                <div class="stat-item">
+                    <span class="stat-value">
+                        {% if habit.acknowledged %}
+                            <span style="color: #2e7d32">✓ Yes</span>
+                        {% else %}
+                            <span style="color: #c62828">✗ No</span>
+                        {% endif %}
+                    </span>
+                    <span class="stat-label">Acknowledged</span>
+                </div>
+                <div id="ack-container-{{ habit.id }}" class="mt-2">
+                    {% if not habit.acknowledged and not today_response.completed %}
+                        <button onclick="acknowledgeHabit('{{ habit.id }}')" class="btn btn-sm btn-info">Acknowledge Now</button>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        <section class="stats-section">
             <h2>Statistics</h2>
             <div class="stat-grid">
                 <div class="stat-item">

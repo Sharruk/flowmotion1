@@ -190,6 +190,9 @@ def habit_respond(request, habit_id):
             
             if response.completed:
                 response.emotional_state = 'happy'
+                # Reset acknowledgment when habit is completed
+                habit.acknowledged = True
+                habit.save()
                 # Send Linux desktop notification
                 try:
                     send_notification("FlowMotion Reminder", feedback)
@@ -263,3 +266,15 @@ def snooze_habit(request, habit_id):
     habit = get_object_or_404(Habit, id=habit_id, user=request.user)
     messages.info(request, f'Habit "{habit.name}" snoozed for 15 minutes 😐')
     return redirect('widget_dashboard')
+
+@login_required
+def acknowledge_habit(request, habit_id):
+    habit = get_object_or_404(Habit, id=habit_id, user=request.user)
+    habit.acknowledged = True
+    habit.save()
+    
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'success': True})
+    
+    messages.success(request, f'Habit "{habit.name}" acknowledged!')
+    return redirect('dashboard')

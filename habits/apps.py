@@ -17,9 +17,15 @@ class HabitsConfig(AppConfig):
                 try:
                     from apscheduler.schedulers.background import BackgroundScheduler
                     from .notification_service import check_habits
+                    from django.utils import timezone
+                    from .models import Habit
+
+                    def reset_acknowledgments():
+                        Habit.objects.all().update(acknowledged=False)
 
                     scheduler = BackgroundScheduler()
                     scheduler.add_job(check_habits, 'interval', minutes=1, id='check_habits_job', replace_existing=True)
+                    scheduler.add_job(reset_acknowledgments, 'cron', hour=0, minute=0, id='reset_acks_job', replace_existing=True)
                     scheduler.start()
                 except Exception as e:
                     print(f"[FlowMotion] Scheduler not started: {e}")
