@@ -24,7 +24,11 @@ else:
 CSRF_TRUSTED_ORIGINS = [
     'https://*.replit.dev',
     'https://*.replit.app',
-    'https://217acc94-39e9-4e16-b00e-8cefafa5b209-00-3pdxz7drw6ltp.picard.replit.dev'
+    'https://217acc94-39e9-4e16-b00e-8cefafa5b209-00-3pdxz7drw6ltp.picard.replit.dev',
+    'http://localhost:5000',
+    'http://127.0.0.1:5000',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
 ]
 
 if REPLIT_DEPLOYMENT:

@@ -1,5 +1,6 @@
+import os
+import sys
 from django.apps import AppConfig
-from apscheduler.schedulers.background import BackgroundScheduler
 
 
 class HabitsConfig(AppConfig):
@@ -7,8 +8,18 @@ class HabitsConfig(AppConfig):
     name = 'habits'
 
     def ready(self):
-        from .notification_service import check_habits
+        # Only start the scheduler in the main process (not in the reloader child)
+        # Django's dev server runs ready() twice: once in the reloader and once in the main process.
+        # We also skip it during migrations and other management commands.
+        if os.environ.get('RUN_MAIN') == 'true' or 'runserver' not in sys.argv:
+            # Only start if we're actually running the server
+            if 'runserver' in sys.argv:
+                try:
+                    from apscheduler.schedulers.background import BackgroundScheduler
+                    from .notification_service import check_habits
 
-        scheduler = BackgroundScheduler()
-        scheduler.add_job(check_habits, 'interval', minutes=1)
-        scheduler.start()
+                    scheduler = BackgroundScheduler()
+                    scheduler.add_job(check_habits, 'interval', minutes=1, id='check_habits_job', replace_existing=True)
+                    scheduler.start()
+                except Exception as e:
+                    print(f"[FlowMotion] Scheduler not started: {e}")

@@ -17,7 +17,7 @@ def get_emotional_feedback(habit_name, completed, streak_count):
         return f"Don't worry, you'll get {habit_name} next time. Stay focused! 🎯"
 
     try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GOOGLE_API_KEY}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GOOGLE_API_KEY}"
         
         status = "just completed" if completed else "missed"
         prompt = f"""
@@ -67,7 +67,7 @@ def get_habit_suggestions(habit_name, habit_description):
         }
 
     try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GOOGLE_API_KEY}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GOOGLE_API_KEY}"
         
         prompt = f"""
         Analyze this habit/task:
@@ -103,3 +103,66 @@ def get_habit_suggestions(habit_name, habit_description):
             "suggested_tools": [],
             "estimated_time": "30 minutes"
         }
+
+def generate_notification_messages(habit_name):
+    """
+    Generates three dynamic notification messages (PreReminder, OnTime, Overdue)
+    for a habit using Gemini AI.
+    """
+    # Fallback messages if API key is missing or call fails
+    fallbacks = {
+        "pre_reminder": f"Ready for {habit_name}? It starts in five minutes.",
+        "on_time": f"It is time for {habit_name}. Let us get started!",
+        "overdue": f"Your {habit_name} is waiting for you. You can still complete it!"
+    }
+
+    if not GOOGLE_API_KEY:
+        return fallbacks
+
+    try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GOOGLE_API_KEY}"
+        
+        prompt = f"""
+        Return exactly three notification messages for the habit "{habit_name}":
+
+        PreReminder: (5 minutes before — friendly, non-intrusive warm-up)
+        OnTime: (right now — clear, action-oriented call to start)
+        Overdue: (5 minutes late, not yet done — supportive, gentle nudge)
+
+        Rules:
+        - No emojis. No markdown. Plain text only.
+        - Each message must naturally include the habit name.
+        - Under 15 words each. Sound human and emotionally varied, like Duolingo push messages.
+        - Avoid repeating wording across messages.
+        Return ONLY the three lines, prefixed with the labels (PreReminder:, OnTime:, Overdue:).
+        """
+        
+        payload = {
+            "contents": [{
+                "parts": [{"text": prompt}]
+            }]
+        }
+        
+        response = requests.post(url, json=payload, timeout=10)
+        data = response.json()
+        
+        text = data['candidates'][0]['content']['parts'][0]['text'].strip()
+        
+        messages = {}
+        for line in text.split('\n'):
+            if line.startswith('PreReminder:'):
+                messages['pre_reminder'] = line.replace('PreReminder:', '').strip()
+            elif line.startswith('OnTime:'):
+                messages['on_time'] = line.replace('OnTime:', '').strip()
+            elif line.startswith('Overdue:'):
+                messages['overdue'] = line.replace('Overdue:', '').strip()
+        
+        # Ensure we have all messages, otherwise use fallbacks for missing ones
+        for key in fallbacks:
+            if key not in messages or not messages[key]:
+                messages[key] = fallbacks[key]
+                
+        return messages
+    except Exception as e:
+        print(f"AI Notification Gen Error: {e}")
+        return fallbacks
