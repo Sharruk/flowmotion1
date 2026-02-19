@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        location.reload(); // Refresh to update all states
+                        location.reload(); 
                     }
                 })
                 .catch(error => {
@@ -42,22 +42,25 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 2. Countdown Timers
     updateAllCountdowns();
-    setInterval(updateAllCountdowns, 60000);
+    setInterval(updateAllCountdowns, 1000); // Live update every second
 });
 
 function updateAllCountdowns() {
     const countdowns = document.querySelectorAll('.countdown-timer, #widget-countdown, .countdown');
     
     countdowns.forEach(el => {
+        // Dynamic day-based calculation for widgets
         const startDateStr = el.getAttribute('data-start');
         const duration = parseInt(el.getAttribute('data-duration'));
+        const serverTimeStr = el.getAttribute('data-server-time');
         
         if (startDateStr && !isNaN(duration)) {
             const startDate = new Date(startDateStr);
-            const today = new Date();
+            // Use server time as base to prevent client skew
+            const baseTime = serverTimeStr ? new Date(serverTimeStr) : new Date();
             
             const startDay = Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-            const currentDay = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+            const currentDay = Date.UTC(baseTime.getFullYear(), baseTime.getMonth(), baseTime.getDate());
             
             const diffTime = currentDay - startDay;
             const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
@@ -69,6 +72,7 @@ function updateAllCountdowns() {
             return;
         }
 
+        // Live time-based calculation for reminders
         const targetTimeStr = el.getAttribute('data-time');
         if (!targetTimeStr) return;
         
@@ -77,15 +81,21 @@ function updateAllCountdowns() {
         const target = new Date();
         target.setHours(parseInt(hours), parseInt(minutes), 0);
         
-        let diff = target - now;
-        if (diff < 0) {
+        if (target < now) {
             target.setDate(target.getDate() + 1);
-            diff = target - now;
         }
         
+        const diff = target - now;
         const h = Math.floor(diff / 3600000);
         const m = Math.floor((diff % 3600000) / 60000);
-        el.innerText = `${h.toString().padStart(2, '0')}h ${m.toString().padStart(2, '0')}m remaining`;
+        const s = Math.floor((diff % 60000) / 1000);
+        
+        if (el.id === 'widget-countdown' || el.classList.contains('countdown')) {
+             // If we have a time-based widget (like in widget.html)
+             el.innerText = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        } else {
+             el.innerText = `${h.toString().padStart(2, '0')}h ${m.toString().padStart(2, '0')}m ${s.toString().padStart(2, '0')}s remaining`;
+        }
     });
 }
 

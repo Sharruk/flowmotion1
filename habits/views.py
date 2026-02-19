@@ -122,6 +122,7 @@ def habit_detail(request, habit_id):
         'widget_exists': widget_exists,
         'start_date': habit.created_at.date().isoformat(),
         'duration': habit.duration,
+        'server_time': timezone.now().isoformat(),
     }
     
     if is_widget_mode:
