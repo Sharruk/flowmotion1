@@ -3,6 +3,7 @@ import subprocess
 from django.utils import timezone
 from .models import Habit, HabitResponse
 from .ai_utils import generate_notification_messages
+from .reminder_utils import is_time_to_notify
 
 # Simple in-memory cache for the generated AI messages
 # Keys: habit_id, Value: {'messages': {...}, 'date': date}
@@ -38,8 +39,7 @@ def get_cached_messages(habit):
 
 def check_habits():
     now = timezone.localtime()
-    # Normalize to minute precision for comparison
-    now_min = now.replace(second=0, microsecond=0)
+    current_time = now.time()
     today = now.date()
 
     habits = Habit.objects.filter(
@@ -49,34 +49,40 @@ def check_habits():
     )
 
     for habit in habits:
-        # Create full datetimes for the reminder windows today
-        reminder_dt = timezone.make_aware(datetime.combine(today, habit.reminder_time))
+        notification_type = is_time_to_notify(habit, current_time)
         
-        pre_reminder_dt = reminder_dt - timedelta(minutes=5)
-        on_time_dt = reminder_dt
-        overdue_dt = reminder_dt + timedelta(minutes=5)
+        if notification_type:
+            # Check if we already sent a notification in this same minute to prevent duplicates
+            if habit.last_notification_time and \
+               habit.last_notification_time.date() == today and \
+               habit.last_notification_time.hour == current_time.hour and \
+               habit.last_notification_time.minute == current_time.minute:
+                continue
 
-        title = "FlowMotion"
-
-        # 1. Pre-Reminder (5 minutes before)
-        if now_min == pre_reminder_dt:
             messages = get_cached_messages(habit)
-            send_notification(f"{title}: Prep Time", messages.get('pre_reminder'))
-
-        # 2. On-Time Reminder
-        elif now_min == on_time_dt:
-            messages = get_cached_messages(habit)
-            send_notification(f"{title}: Start Now", messages.get('on_time'))
-
-        # 3. Overdue Notification (5 minutes after)
-        elif now_min == overdue_dt:
-            # Only send if not completed today
-            completed = HabitResponse.objects.filter(
-                habit=habit, 
-                date=today, 
-                completed=True
-            ).exists()
+            title = "FlowMotion"
             
-            if not completed:
-                messages = get_cached_messages(habit)
-                send_notification(f"{title}: Don't Forget", messages.get('overdue'))
+            if notification_type == 'pre':
+                msg = messages.get('pre_reminder', f"Upcoming: {habit.name}")
+                send_notification(f"{title}: Prep Time", msg)
+            elif notification_type == 'main':
+                msg = messages.get('on_time', habit.question)
+                send_notification(f"{title}: Start Now", msg)
+            elif notification_type == 'post':
+                # Double check completion status for post-reminder safety
+                completed = HabitResponse.objects.filter(
+                    habit=habit, 
+                    date=today, 
+                    completed=True
+                ).exists()
+                
+                if not completed:
+                    msg = messages.get('overdue', f"Don't forget: {habit.name}")
+                    send_notification(f"{title}: Don't Forget", msg)
+                else:
+                    # If completed, we don't send post-reminder
+                    continue
+
+            # Update last notification time
+            habit.last_notification_time = now
+            habit.save()
