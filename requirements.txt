@@ -13,3 +13,14 @@ grpcio==1.68.1
 apscheduler
 django-apscheduler
 requests
+apscheduler
+django
+django-apscheduler
+djangorestframework
+google-genai
+grpcio
+gunicorn
+pydantic
+python-dotenv
+requests
+tenacity
