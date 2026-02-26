@@ -95,6 +95,17 @@ class HabitResponse(models.Model):
         ordering = ['-date']
 
 
+class AIRecommendation(models.Model):
+    habit = models.ForeignKey(Habit, on_delete=models.CASCADE, related_name='ai_recommendations')
+    tool_name = models.CharField(max_length=200)
+    description = models.TextField()
+    url = models.URLField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.tool_name} for {self.habit.name}"
+
+
 class StreakData(models.Model):
     habit = models.OneToOneField(Habit, on_delete=models.CASCADE, related_name='streak')
     current_streak = models.IntegerField(default=0)

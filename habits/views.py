@@ -4,8 +4,8 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.utils import timezone
 from datetime import date, timedelta
-from .models import Habit, YesNoHabit, MeasurableHabit, HabitResponse, StreakData
-from .ai_utils import get_habit_suggestions, get_emotional_feedback
+from .models import Habit, YesNoHabit, MeasurableHabit, HabitResponse, StreakData, AIRecommendation
+from .ai_utils import get_habit_suggestions, get_emotional_feedback, get_ai_recommendations
 from .notification_service import send_notification
 from .widget_utils import create_habit_widget_shortcut, check_widget_exists
 
@@ -87,6 +87,20 @@ def habit_create(request):
             )
         
         StreakData.objects.create(habit=habit)
+        
+        # Get AI tool recommendations
+        try:
+            recommendations = get_ai_recommendations(name)
+            for rec in recommendations:
+                AIRecommendation.objects.create(
+                    habit=habit,
+                    tool_name=rec.get('name'),
+                    description=rec.get('description'),
+                    url=rec.get('url')
+                )
+        except Exception as e:
+            print(f"Failed to save AI recommendations: {e}")
+
         messages.success(request, f'Habit "{name}" created successfully!')
         return redirect('habit_detail', habit_id=habit.id)
     
@@ -106,6 +120,8 @@ def habit_detail(request, habit_id):
     is_measurable = hasattr(habit, 'measurablehabit')
     measurable_data = habit.measurablehabit if is_measurable else None
     
+    ai_recommendations = habit.ai_recommendations.all()
+    
     total_responses = HabitResponse.objects.filter(habit=habit).count()
     completed_responses = HabitResponse.objects.filter(habit=habit, completed=True).count()
     completion_rate = (completed_responses / total_responses * 100) if total_responses > 0 else 0
@@ -117,6 +133,7 @@ def habit_detail(request, habit_id):
         'today_response': today_response,
         'is_measurable': is_measurable,
         'measurable_data': measurable_data,
+        'ai_recommendations': ai_recommendations,
         'completion_rate': round(completion_rate, 1),
         'is_widget_mode': is_widget_mode,
         'widget_exists': widget_exists,

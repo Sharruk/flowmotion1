@@ -46,6 +46,51 @@ def get_emotional_feedback(habit_name, completed, streak_count):
             return f"Excellent work on {habit_name}! You're doing great. 🌟"
         return f"Tomorrow is a new day to conquer {habit_name}. You've got this! 💪"
 
+def get_ai_recommendations(task_text):
+    """
+    Based on the user's task, recommend 3 to 5 relevant AI tools using Gemini.
+    """
+    if not GOOGLE_API_KEY:
+        return []
+
+    try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GOOGLE_API_KEY}"
+        
+        prompt = f"""
+        You are an AI assistant. 
+        Based on the user's task: "{task_text}", recommend 3 to 5 relevant AI tools.
+        Return output in strict JSON format:
+
+        [
+          {{
+            "name": "Tool Name",
+            "description": "Short description",
+            "url": "Official Website URL"
+          }}
+        ]
+
+        Only return JSON. No extra text. Do not include markdown formatting.
+        """
+        
+        payload = {
+            "contents": [{
+                "parts": [{"text": prompt}]
+            }]
+        }
+        
+        response = requests.post(url, json=payload, timeout=10)
+        data = response.json()
+        
+        text = data['candidates'][0]['content']['parts'][0]['text'].strip()
+        # Clean up any potential markdown
+        text = text.replace("```json", "").replace("```", "").strip()
+        
+        recommendations = json.loads(text)
+        return recommendations
+    except Exception as e:
+        print(f"AI Recommendation Error: {e}")
+        return []
+
 def get_habit_suggestions(habit_name, habit_description):
     # Fallback to simple matching if key is missing or for specific keywords
     if "ppt" in habit_name.lower() or "presentation" in habit_name.lower():

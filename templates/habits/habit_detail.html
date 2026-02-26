@@ -105,6 +105,21 @@
             </div>
         </section>
         
+        {% if ai_recommendations %}
+        <section class="ai-tools-section">
+            <h2>Recommended AI Tools</h2>
+            <div class="tool-cards">
+                {% for rec in ai_recommendations %}
+                <div class="tool-card">
+                    <h3>{{ rec.tool_name }}</h3>
+                    <p>{{ rec.description }}</p>
+                    <a href="{{ rec.url }}" target="_blank" class="btn btn-primary">Open Tool</a>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
         {% if habit.ai_category %}
         <section class="ai-section">
             <h2>AI Insights</h2>
