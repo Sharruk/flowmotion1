@@ -48,29 +48,38 @@ def get_emotional_feedback(habit_name, completed, streak_count):
 
 def get_ai_recommendations(task_text):
     """
-    Based on the user's task, recommend 3 to 5 relevant AI tools using Gemini.
+    Based on the user's task, recommend 3 relevant AI tools using Gemini.
     """
     if not GOOGLE_API_KEY:
+        print("AI Recommendation: GOOGLE_API_KEY missing.")
         return []
 
+    print(f"DEBUG: get_ai_recommendations called for task: {task_text}")
     try:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GOOGLE_API_KEY}"
         
         prompt = f"""
-        You are an AI assistant. 
-        Based on the user's task: "{task_text}", recommend 3 to 5 relevant AI tools.
-        Return output in strict JSON format:
+You are an AI tool recommendation engine.
 
-        [
-          {{
-            "name": "Tool Name",
-            "description": "Short description",
-            "url": "Official Website URL"
-          }}
-        ]
+User task: {task_text}
 
-        Only return JSON. No extra text. Do not include markdown formatting.
-        """
+Recommend 3 relevant AI tools that help complete this task.
+
+Return ONLY valid JSON.
+No explanation.
+No markdown.
+No extra text.
+
+Format:
+
+[
+  {{
+    "name": "Tool Name",
+    "description": "Short description",
+    "url": "https://officialsite.com"
+  }}
+]
+"""
         
         payload = {
             "contents": [{
@@ -78,18 +87,80 @@ def get_ai_recommendations(task_text):
             }]
         }
         
+        print("DEBUG: Calling Gemini API...")
         response = requests.post(url, json=payload, timeout=10)
         data = response.json()
         
+        if 'candidates' not in data or not data['candidates']:
+            print(f"DEBUG: No candidates in Gemini response: {data}")
+            return get_fallback_recommendations(task_text)
+
         text = data['candidates'][0]['content']['parts'][0]['text'].strip()
+        print(f"DEBUG: Raw Gemini response: {text}")
+
         # Clean up any potential markdown
-        text = text.replace("```json", "").replace("```", "").strip()
+        if "```" in text:
+            text = text.replace("```json", "").replace("```", "").strip()
         
-        recommendations = json.loads(text)
+        try:
+            recommendations = json.loads(text)
+            print(f"DEBUG: Parsed JSON result: {recommendations}")
+        except json.JSONDecodeError:
+            print("DEBUG: JSON parsing failed, attempting cleanup retry...")
+            # More aggressive cleaning
+            import re
+            json_match = re.search(r'\[.*\]', text, re.DOTALL)
+            if json_match:
+                text = json_match.group(0)
+                recommendations = json.loads(text)
+                print(f"DEBUG: Parsed JSON result after cleanup: {recommendations}")
+            else:
+                raise
+
         return recommendations
     except Exception as e:
         print(f"AI Recommendation Error: {e}")
-        return []
+        return get_fallback_recommendations(task_text)
+
+def get_fallback_recommendations(task_text):
+    """
+    Provides default tools if Gemini fails or returns empty results.
+    """
+    task_lower = task_text.lower()
+    
+    fallbacks = [
+        {"keywords": ["fit", "gym", "workout", "health", "run"], "tools": [
+            {"name": "Nike Training Club", "description": "Expert-designed workouts", "url": "https://www.nike.com/ntc-app"},
+            {"name": "Fitbod", "description": "AI-personalized workout plans", "url": "https://fitbod.me/"},
+            {"name": "MyFitnessPal", "description": "Calorie and macro tracking", "url": "https://www.myfitnesspal.com/"}
+        ]},
+        {"keywords": ["write", "blog", "essay", "book", "note"], "tools": [
+            {"name": "Notion AI", "description": "AI writing and organization assistant", "url": "https://www.notion.so/product/ai"},
+            {"name": "Grammarly", "description": "AI-powered writing assistant", "url": "https://www.grammarly.com/"},
+            {"name": "Jasper", "description": "AI content generation platform", "url": "https://www.jasper.ai/"}
+        ]},
+        {"keywords": ["ppt", "presentation", "slide", "deck"], "tools": [
+            {"name": "Gamma", "description": "AI-powered presentation builder", "url": "https://gamma.app/"},
+            {"name": "Canva Magic Design", "description": "AI design for presentations", "url": "https://www.canva.com/"},
+            {"name": "Beautiful.ai", "description": "Smart presentation software", "url": "https://www.beautiful.ai/"}
+        ]},
+        {"keywords": ["meditate", "calm", "mindful", "sleep", "breath"], "tools": [
+            {"name": "Headspace", "description": "Guided meditation and mindfulness", "url": "https://www.headspace.com/"},
+            {"name": "Calm", "description": "Sleep, meditation and relaxation", "url": "https://www.calm.com/"},
+            {"name": "Insight Timer", "description": "Free meditation app", "url": "https://insighttimer.com/"}
+        ]}
+    ]
+    
+    for category in fallbacks:
+        if any(kw in task_lower for kw in category["keywords"]):
+            return category["tools"]
+            
+    # Default generic tools
+    return [
+        {"name": "ChatGPT", "description": "Versatile AI assistant for any task", "url": "https://chatgpt.com/"},
+        {"name": "Perplexity AI", "description": "AI-powered search and information discovery", "url": "https://www.perplexity.ai/"},
+        {"name": "Claude", "description": "Advanced AI assistant for writing and analysis", "url": "https://claude.ai/"}
+    ]
 
 def get_habit_suggestions(habit_name, habit_description):
     if not GOOGLE_API_KEY:

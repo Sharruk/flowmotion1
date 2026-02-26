@@ -90,6 +90,8 @@ def habit_create(request):
         
         # Get AI tool recommendations
         try:
+            # Clear old recommendations to avoid duplicates
+            habit.ai_recommendations.all().delete()
             recommendations = get_ai_recommendations(name)
             for rec in recommendations:
                 AIRecommendation.objects.create(
@@ -112,6 +114,20 @@ def habit_detail(request, habit_id):
     today = date.today()
     is_widget_mode = request.GET.get('widget') == 'true'
     widget_exists = check_widget_exists(habit)
+
+    # Automatically call AI recommendations if none exist
+    if not habit.ai_recommendations.exists():
+        try:
+            recommendations = get_ai_recommendations(habit.name)
+            for rec in recommendations:
+                AIRecommendation.objects.create(
+                    habit=habit,
+                    tool_name=rec.get('name'),
+                    description=rec.get('description'),
+                    url=rec.get('url')
+                )
+        except Exception as e:
+            print(f"Failed to auto-generate recommendations in detail view: {e}")
 
     responses = HabitResponse.objects.filter(habit=habit).order_by('-date')[:30]
     streak, _ = StreakData.objects.get_or_create(habit=habit)

@@ -1,0 +1,165 @@
+✅ STEP 1 — CHECK IF GEMINI IS BEING CALLED
+
+Copy this first:
+
+Step 1:
+Add debug logs inside the AI recommendation function.
+
+Log:
+- Task name
+- When Gemini API is called
+- Raw Gemini response
+- Parsed JSON result
+
+Print logs in terminal.
+
+Verify whether:
+1) Gemini is being triggered
+2) Gemini returns valid JSON
+3) Response is empty or not
+
+Wait for output.
+
+If Gemini is NOT being called → move to Step 2.
+
+✅ STEP 2 — FORCE GEMINI TO RUN FOR EVERY HABIT
+
+Copy this:
+
+Step 2:
+Modify habit creation and habit detail logic.
+
+If habit has no AIRecommendation records,
+automatically call get_ai_recommendations().
+
+Remove all keyword filtering.
+
+AI must run for every habit that has no recommendations.
+✅ STEP 3 — FIX GEMINI PROMPT (STRICT JSON MODE)
+
+Sometimes Gemini changed format.
+
+Replace your Gemini prompt with this:
+
+Step 3:
+Replace current Gemini prompt with:
+
+"You are an AI tool recommendation engine.
+
+User task: {task_name}
+
+Recommend 3 relevant AI tools that help complete this task.
+
+Return ONLY valid JSON.
+No explanation.
+No markdown.
+No extra text.
+
+Format:
+
+[
+  {
+    "name": "Tool Name",
+    "description": "Short description",
+    "url": "https://officialsite.com"
+  }
+]"
+
+If response is not valid JSON,
+retry once.
+✅ STEP 4 — ADD JSON VALIDATION
+
+Sometimes AI response breaks parsing.
+
+Copy this:
+
+Step 4:
+Add JSON validation.
+
+After receiving Gemini response:
+
+Try:
+    parse JSON
+If parsing fails:
+    clean response (remove markdown, remove backticks)
+    retry parsing
+
+If still fails:
+    log error clearly
+✅ STEP 5 — ENSURE RECOMMENDATIONS ARE SAVED
+
+Copy this:
+
+Step 5:
+After successful JSON parsing:
+
+For each tool in response:
+    create AIRecommendation object in database
+
+Before saving:
+    delete old recommendations for that habit
+    to avoid duplicates
+✅ STEP 6 — FIX TEMPLATE DISPLAY CONDITION
+
+Sometimes backend works but template hides it.
+
+Copy this:
+
+Step 6:
+In habit detail template:
+
+Check AIRecommendation query.
+
+If recommendations exist:
+    display them
+
+Else:
+    show "No tools found"
+
+Remove any condition that restricts display by category.
+✅ STEP 7 — MANUAL TEST ENDPOINT
+
+To isolate problem:
+
+Step 7:
+Create temporary test route:
+
+/test-ai/
+
+Hardcode:
+task = "gym workout"
+
+Call get_ai_recommendations(task)
+Return raw JSON in browser.
+
+If this works → problem is integration.
+If this fails → problem is Gemini call.
+🔎 MOST COMMON REASON THIS HAPPENS
+
+90% chance:
+
+Gemini is returning something like:
+
+Here are some tools:
+
+[
+ ...
+]
+
+And your parser fails because of extra text.
+
+So JSON parsing fails silently.
+
+🧠 FINAL SAFETY NET
+
+Add this fallback:
+
+If Gemini returns empty list:
+    Insert default tools based on keywords:
+
+Fitness → Nike Training Club, Fitbod
+Writing → Notion AI, Grammarly
+Presentation → Gamma, Canva
+Meditation → Headspace, Calm
+
+So UI never shows empty.
