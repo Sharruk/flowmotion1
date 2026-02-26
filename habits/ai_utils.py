@@ -92,18 +92,6 @@ def get_ai_recommendations(task_text):
         return []
 
 def get_habit_suggestions(habit_name, habit_description):
-    # Fallback to simple matching if key is missing or for specific keywords
-    if "ppt" in habit_name.lower() or "presentation" in habit_name.lower():
-        return {
-            "category": "Presentation",
-            "suggested_tools": [
-                {"name": "Gamma", "url": "https://gamma.app"},
-                {"name": "Canva", "url": "https://canva.com"},
-                {"name": "Google Slides", "url": "https://slides.google.com"}
-            ],
-            "estimated_time": "1-2 hours"
-        }
-
     if not GOOGLE_API_KEY:
         return {
             "category": "General",
@@ -120,7 +108,7 @@ def get_habit_suggestions(habit_name, habit_description):
         Description: {habit_description}
         
         Return a JSON object with:
-        1. "category": A category for this task (e.g., Coding, Writing, Health, etc.)
+        1. "category": A category for this task (e.g., Coding, Writing, Health, Fitness, Mindfulness, etc.)
         2. "suggested_tools": A list of 3 suggested digital tools or apps that can help with this task. Include the tool name and its official URL. Example: {{"name": "ToolName", "url": "https://tool.com"}}
         3. "estimated_time": An estimated time to complete or perform this habit once.
         

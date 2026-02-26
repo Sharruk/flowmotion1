@@ -120,33 +120,35 @@
         </section>
         {% endif %}
 
-        {% if habit.ai_category %}
         <section class="ai-section">
             <h2>AI Insights</h2>
             <div class="ai-content">
                 <div class="ai-item">
                     <span class="ai-label">Category:</span>
-                    <span class="ai-value">{{ habit.ai_category }}</span>
+                    <span class="ai-value">{{ habit.ai_category|default:"General" }}</span>
                 </div>
                 <div class="ai-item">
                     <span class="ai-label">Estimated Time:</span>
-                    <span class="ai-value">{{ habit.ai_estimated_time }}</span>
+                    <span class="ai-value">{{ habit.ai_estimated_time|default:"30 minutes" }}</span>
                 </div>
                 <div class="ai-tools">
                     <h3>Suggested Tools</h3>
                     <ul class="tool-list">
-                        {% for tool in habit.ai_suggestions %}
-                        <li>
-                            <a href="{{ tool.url }}" target="_blank" class="tool-link">
-                                {{ tool.name }}
-                            </a>
-                        </li>
-                        {% endfor %}
+                        {% if habit.ai_suggestions %}
+                            {% for tool in habit.ai_suggestions %}
+                            <li>
+                                <a href="{{ tool.url }}" target="_blank" class="tool-link">
+                                    {{ tool.name }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="text-muted">No specific tools suggested yet.</li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
         </section>
-        {% endif %}
         
         <section class="chart-section">
             <h2>Progress</h2>

@@ -1,0 +1,179 @@
+Good. I understand the issue clearly.
+
+Right now:
+
+✔ PPT → AI Insights working
+❌ Documentation → no AI
+❌ Gym → no AI
+❌ Workout → no AI
+❌ Breathing → no AI
+
+That means your system is probably:
+
+Hardcoded for “presentation” category
+OR
+
+Keyword detection only checking “ppt”
+OR
+
+Gemini only triggered for one category
+
+We will fix this properly.
+
+You said:
+👉 “Give me step-by-step prompts so I can copy to Replit.”
+
+Perfect. Use these one by one.
+
+✅ STEP 1 — REMOVE HARDCODED CATEGORY FILTER
+
+Copy this first:
+
+Step 1:
+Search entire project for:
+
+- "presentation"
+- "ppt"
+- "if category == Presentation"
+- any hardcoded AI tool logic
+
+Remove any condition that limits AI recommendations
+to only Presentation category.
+
+AI recommendation should run for ALL habits,
+not just one category.
+
+Wait for it to update.
+
+✅ STEP 2 — REMOVE KEYWORD LIMITATION
+
+Right now you probably have something like:
+
+if "ppt" in task → call Gemini
+
+We fix that.
+
+Copy this:
+
+Step 2:
+Modify AI trigger logic.
+
+Instead of checking only specific keywords like:
+ppt, presentation
+
+Change logic to:
+
+Call Gemini for EVERY new habit created,
+regardless of category.
+
+Do not restrict by keyword.
+
+AI should dynamically decide which tools are relevant.
+✅ STEP 3 — IMPROVE GEMINI PROMPT (CRITICAL)
+
+Right now your prompt is probably biased toward presentation tools.
+
+Replace it with this:
+
+Step 3:
+Update Gemini prompt to be fully dynamic.
+
+New prompt:
+
+"You are an intelligent assistant.
+Based on the user's task, recommend 3-5 relevant AI tools 
+that can help complete that task.
+
+Examples:
+- If task is workout → suggest fitness apps
+- If task is documentation → suggest writing AI tools
+- If task is coding → suggest coding assistants
+- If task is meditation → suggest mindfulness apps
+
+Return response ONLY in JSON format:
+
+[
+  {
+    "name": "Tool Name",
+    "description": "Short description",
+    "url": "Official website"
+  }
+]
+
+Do not assume presentation.
+Adapt recommendation based on task."
+✅ STEP 4 — CHECK IF AI FUNCTION IS ACTUALLY CALLED
+
+Maybe Gemini is not even being triggered.
+
+Copy this:
+
+Step 4:
+Add debug logging inside AI recommendation function.
+
+Log:
+- task name
+- category
+- whether Gemini API is called
+- Gemini response
+
+Verify that AI function runs
+when creating gym, workout, documentation habits.
+
+If Gemini is not called → that’s your bug.
+
+✅ STEP 5 — REMOVE CATEGORY-BASED FILTER IN TEMPLATE
+
+Sometimes backend sends data, but template hides it.
+
+Copy this:
+
+Step 5:
+Check habit detail template.
+
+Remove any condition like:
+
+{% if habit.category == "Presentation" %}
+
+AI Insights section should display
+whenever AIRecommendation objects exist.
+
+Do not restrict by category.
+✅ STEP 6 — AUTO-GENERATE AI FOR OLD HABITS
+
+Currently AI may only run when habit is first created.
+
+To enable for old habits:
+
+Step 6:
+Create a management command or script
+that loops through all existing habits.
+
+If habit has no AIRecommendation,
+call Gemini and generate recommendations.
+
+Run this once to populate AI for gym,
+documentation, breathing, etc.
+✅ STEP 7 — ADD FALLBACK LOGIC (VERY IMPORTANT)
+
+Sometimes Gemini may return nothing for things like:
+
+breathing
+
+stretching
+
+walking
+
+Add fallback:
+
+Step 7:
+If Gemini returns empty result,
+fallback to generic tool suggestions
+based on category.
+
+Example:
+- Fitness → MyFitnessPal, Nike Training Club
+- Writing → Notion AI, Grammarly
+- Meditation → Headspace, Calm
+
+This guarantees something always appears.
