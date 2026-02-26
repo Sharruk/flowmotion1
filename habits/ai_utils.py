@@ -87,15 +87,26 @@ Format:
             }]
         }
         
-        print("DEBUG: Calling Gemini API...")
-        response = requests.post(url, json=payload, timeout=10)
-        data = response.json()
-        
-        if 'candidates' not in data or not data['candidates']:
-            print(f"DEBUG: No candidates in Gemini response: {data}")
-            return get_fallback_recommendations(task_text)
+        try:
+            print("DEBUG: Calling Gemini API (Attempt 1)...")
+            response = requests.post(url, json=payload, timeout=10)
+            data = response.json()
+            
+            if 'candidates' not in data or not data['candidates']:
+                print(f"DEBUG: No candidates in Gemini response: {data}")
+                raise ValueError("No candidates in response")
 
-        text = data['candidates'][0]['content']['parts'][0]['text'].strip()
+            text = data['candidates'][0]['content']['parts'][0]['text'].strip()
+        except Exception as e:
+            print(f"DEBUG: Gemini API Attempt 1 failed: {e}. Retrying once...")
+            try:
+                response = requests.post(url, json=payload, timeout=10)
+                data = response.json()
+                text = data['candidates'][0]['content']['parts'][0]['text'].strip()
+            except Exception as retry_e:
+                print(f"DEBUG: Gemini API Retry failed: {retry_e}")
+                return get_fallback_recommendations(task_text)
+
         print(f"DEBUG: Raw Gemini response: {text}")
 
         # Clean up any potential markdown

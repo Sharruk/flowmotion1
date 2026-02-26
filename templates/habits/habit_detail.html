@@ -105,20 +105,24 @@
             </div>
         </section>
         
-        {% if ai_recommendations %}
         <section class="ai-tools-section">
             <h2>Recommended AI Tools</h2>
             <div class="tool-cards">
-                {% for rec in ai_recommendations %}
-                <div class="tool-card">
-                    <h3>{{ rec.tool_name }}</h3>
-                    <p>{{ rec.description }}</p>
-                    <a href="{{ rec.url }}" target="_blank" class="btn btn-primary">Open Tool</a>
-                </div>
-                {% endfor %}
+                {% if ai_recommendations %}
+                    {% for rec in ai_recommendations %}
+                    <div class="tool-card">
+                        <h3>{{ rec.tool_name }}</h3>
+                        <p>{{ rec.description }}</p>
+                        <a href="{{ rec.url }}" target="_blank" class="btn btn-primary">Open Tool</a>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-tools-message">
+                        <p>No tools found yet. AI is working on it!</p>
+                    </div>
+                {% endif %}
             </div>
         </section>
-        {% endif %}
 
         <section class="ai-section">
             <h2>AI Insights</h2>
