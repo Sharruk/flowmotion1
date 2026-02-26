@@ -123,18 +123,24 @@ def generate_notification_messages(habit_name):
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GOOGLE_API_KEY}"
         
         prompt = f"""
-        Return exactly three notification messages for the habit "{habit_name}":
+        Generate three dynamic, emotionally resonant notification messages for the habit "{habit_name}" following the Duolingo style (varied, slightly persistent, but motivating).
 
-        PreReminder: (5 minutes before — friendly, non-intrusive warm-up)
-        OnTime: (right now — clear, action-oriented call to start)
-        Overdue: (5 minutes late, not yet done — supportive, gentle nudge)
+        Return exactly in this format:
+        PreReminder: <message>
+        OnTime: <message>
+        Overdue: <message>
+
+        Scenarios:
+        1. PreReminder (5m before): Gently prepare the user. Friendly and motivating.
+        2. OnTime (Exact time): Direct call to action. Clear and encouraging.
+        3. Overdue (5m after, if not done): Nudge without shaming. Supportive and slightly urgent.
 
         Rules:
         - No emojis. No markdown. Plain text only.
-        - Each message must naturally include the habit name.
-        - Under 15 words each. Sound human and emotionally varied, like Duolingo push messages.
-        - Avoid repeating wording across messages.
-        Return ONLY the three lines, prefixed with the labels (PreReminder:, OnTime:, Overdue:).
+        - Naturally include the habit name "{habit_name}".
+        - Under 15 words each.
+        - Use dynamic emotional text.
+        - Return ONLY these three lines.
         """
         
         payload = {
