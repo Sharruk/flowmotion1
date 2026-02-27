@@ -1,0 +1,134 @@
+You are an expert Software Engineering professor.
+
+I am doing Experiment 6 for the subject:
+ICS1405 – Software Engineering Principles and Practices.
+
+Project Name: FlowMotion – Intelligent Habit & Routine Management System
+Technology: Python, Django, GitLab CI/CD
+
+My task is:
+
+"Demonstrate Continuous Integration and Development using GitLab CI/CD"
+
+I need a COMPLETE, DETAILED, and WELL-STRUCTURED lab record answer that can score maximum marks.
+
+Please generate a FULL assignment report with the following sections:
+
+--------------------------------------------------
+TITLE
+Experiment 6: Continuous Integration and Development using GitLab CI/CD
+
+1. Introduction
+1.1 Experiment Overview
+1.2 Importance of CI/CD in Software Engineering
+1.3 Relevance to FlowMotion Project
+1.4 Objectives
+1.5 Scope and Assumptions
+
+2. Tools and Environment
+- GitLab
+- GitLab Runner
+- Python/Django
+- Linux/Replit
+- PostgreSQL/SQLite
+- Docker (if applicable)
+
+3. Pipeline Setup and Configuration
+3.1 Repository Preparation
+- Creating GitLab repository
+- Connecting local repo
+- Setting up .gitignore
+
+3.2 GitLab CI Configuration
+- Explain .gitlab-ci.yml file
+- Show complete sample YAML file with:
+  - stages (build, test, deploy)
+  - jobs
+  - scripts
+  - artifacts
+  - cache
+
+3.3 Sample .gitlab-ci.yml File
+Provide a FULL working example for Django project.
+
+3.4 Pipeline Execution Process
+- How pipeline is triggered
+- How stages execute
+- Screenshot description
+- Logs explanation
+
+4. Automated Build, Test, and Deployment
+4.1 Build Stage
+4.2 Test Stage (Unit tests, Django tests)
+4.3 Deployment Stage (Local/Test server / Docker / Heroku simulation)
+4.4 Verification of Successful Execution
+
+5. Pipeline Analysis and Evaluation
+5.1 Execution Results
+- Build success
+- Test results
+- Deployment status
+
+5.2 Performance Analysis
+- Execution time
+- Bottlenecks
+- Resource usage
+
+5.3 Reliability and Consistency
+- Multiple pipeline runs
+- Failure recovery
+- Log analysis
+
+5.4 Limitations Identified
+- API dependency
+- Runner limitations
+- Network issues
+
+6. Improvement Recommendations
+6.1 Parallel Jobs
+6.2 Caching Dependencies
+6.3 Docker Optimization
+6.4 Security Scanning
+6.5 Additional Test Stages
+
+Justify each improvement clearly.
+
+7. Demonstration and Defense
+7.1 Live Pipeline Demonstration Explanation
+7.2 Design Decisions
+7.3 Defense Based on Performance Metrics
+7.4 Questions and Answers Preparation
+
+8. Documentation and Evidence
+8.1 Screenshots Description
+8.2 Log Samples
+8.3 Commit History
+8.4 Report Organization
+
+9. Observations
+- Technical
+- Management
+- Learning-based
+
+10. Conclusion
+10.1 Summary
+10.2 Learning Outcomes
+10.3 Future Enhancements
+
+11. Appendix
+Appendix A: Full .gitlab-ci.yml
+Appendix B: Sample Logs
+Appendix C: Commands Used
+
+--------------------------------------------------
+
+IMPORTANT:
+- Write in formal academic style
+- Make it detailed (4–6 pages worth)
+- Include tables where useful
+- Add realistic examples
+- Make it suitable for lab record submission
+- Do NOT shorten
+- Do NOT skip any section
+
+Generate the complete report now.

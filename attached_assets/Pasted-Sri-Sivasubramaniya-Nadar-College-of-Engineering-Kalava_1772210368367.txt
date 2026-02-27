@@ -1,0 +1,53 @@
+Sri Sivasubramaniya Nadar College of Engineering, Kalavakkam- 603 110
+(An Autonomous Institution, Affiliated to Anna University, Chennai)
+ICS1405 – Software Engineering Principles and Practices [TCP]
+Regulation: 2023
+Batch: 2024–2029
+Academic Year: 2026–2027 (EVEN)
+General Instructions for All Experiments
+1. Apply all experiments directly to your chosen project.
+2. Record stepwise observations in your lab notebook including:
+o Diagrams, screenshots, tables, plots, logs
+o Algorithm / logic used
+o Tools and commands executed
+o Evidence supporting analysis or evaluation
+o Document all the methods used
+3. Demonstrate incremental and modular implementation in code.
+4. Use any tools for deployment, CI/CD, MLFlow, Optuna, or GitHub workflows.
+5. Include conclusions, inferences, and justification for each task.
+6. Clearly label each section (Problem Analysis, Requirements, Design,
+Implementation, Testing, etc.) for evaluation.
+Experiment 6: Demonstrate continuous integration and development with GitLab
+Scenario:
+You are required to design, configure, and analyze a CI/CD pipeline using GitLab to
+automate build, testing, and deployment processes, and evaluate its effectiveness
+based on observed performance metrics.
+Marks Distribution:
+• Pipeline Setup & Evaluation – 40
+• Demo / Defense – 40
+• Documentation – 20
+Task:
+Pipeline Setup and Configuration (K3 | CO4 & CO5 | PI:1.3.1, 2.1.3, 3.4.1, 3.4.3)
+Students should:
+• Apply CI/CD concepts to configure a GitLab CI pipeline using gitlab-ci.yml
+• Implement automated stages such as build, test, and deploy
+• Integrate basic testing or deployment scripts
+• Execute the pipeline and verify successful stage execution
+• Document pipeline configuration with screenshots and logs
+Pipeline Analysis and Evaluation (K4 | CO4 & CO5 | PI: 2.2.3, 2.2.4, 5.1.2 & 3.2.1)
+Students should:
+• Analyze pipeline execution results such as build success, test pass/fail, and
+deployment status
+• Examine pipeline efficiency using execution time, failure points, and logs
+• Analyze reliability and consistency across multiple pipelines runs
+• Identify limitations or bottlenecks in the configured pipeline
+Improvement Recommendations (K4 | CO5 | PI: 5.1.2)
+Students should:
+• Propose improvements such as parallel jobs, caching, or additional test stages
+• Justify recommendations based on observed pipeline behavior
+• Discuss how the proposed changes improve efficiency or reliability
+Demo and Defense (K3 & K4 | CO4 & CO5)
+Students should:
+• Demonstrate the working CI/CD pipeline
+• Explain design decisions, stage configuration, and scripts used
+• Defend pipeline choices based on performance observations and analysis
