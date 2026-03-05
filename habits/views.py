@@ -5,7 +5,8 @@ from django.http import JsonResponse
 from django.utils import timezone
 from datetime import date, timedelta
 from .models import Habit, YesNoHabit, MeasurableHabit, HabitResponse, StreakData, AIRecommendation
-from .ai_utils import get_habit_suggestions, get_emotional_feedback, get_ai_recommendations
+from .ai_utils import get_habit_suggestions, get_emotional_feedback
+from services.ai_recommendation import get_ai_tool_recommendations
 from .notification_service import send_notification
 from .widget_utils import create_habit_widget_shortcut, check_widget_exists
 
@@ -92,7 +93,7 @@ def habit_create(request):
         try:
             # Clear old recommendations to avoid duplicates
             habit.ai_recommendations.all().delete()
-            recommendations = get_ai_recommendations(name)
+            recommendations = get_ai_tool_recommendations(name)
             for rec in recommendations:
                 AIRecommendation.objects.create(
                     habit=habit,
@@ -118,7 +119,7 @@ def habit_detail(request, habit_id):
     # Automatically call AI recommendations if none exist
     if not habit.ai_recommendations.exists():
         try:
-            recommendations = get_ai_recommendations(habit.name)
+            recommendations = get_ai_tool_recommendations(habit.name)
             for rec in recommendations:
                 AIRecommendation.objects.create(
                     habit=habit,

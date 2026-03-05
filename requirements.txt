@@ -24,3 +24,7 @@ pydantic
 python-dotenv
 requests
 tenacity
+groq
+groq
+pydantic
+pydantic-core
