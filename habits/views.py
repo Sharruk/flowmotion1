@@ -219,7 +219,40 @@ def create_widget(request, habit_id):
         messages.success(request, f"📌 Widget created for this habit!")
     else:
         messages.error(request, f"Could not create widget: {result}")
-    return redirect('habit_detail', habit_id=habit.id)
+    return redirect('widgets_list')
+
+@login_required
+def create_countdown_shortcut(request, widget_id):
+    widget = get_object_or_404(CountdownWidget, id=widget_id, user=request.user)
+    from .widget_utils import _create_linux_shortcut, _create_windows_shortcut, slugify_name
+    import platform
+    import os
+    
+    system = platform.system()
+    host = request.get_host()
+    base_url = f"http://{host}"
+    relative_url = reverse('view_countdown_widget', kwargs={'widget_id': widget.id})
+    widget_url = f"{base_url}{relative_url}"
+    
+    try:
+        desktop_path = os.path.expanduser("~/Desktop")
+        if not os.path.exists(desktop_path):
+            os.makedirs(desktop_path)
+        slug = slugify_name(widget.title)
+        
+        if system == 'Windows':
+            success, path = _create_windows_shortcut(desktop_path, slug, widget, widget_url)
+        else:
+            success, path = _create_linux_shortcut(desktop_path, slug, widget, widget_url)
+            
+        if success:
+            messages.success(request, f"📌 Desktop widget created for {widget.title}!")
+        else:
+            messages.error(request, f"Failed to create widget: {path}")
+    except Exception as e:
+        messages.error(request, f"Error: {str(e)}")
+        
+    return redirect('widgets_list')
 
 @login_required
 def habit_respond(request, habit_id):

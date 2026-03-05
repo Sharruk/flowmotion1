@@ -56,6 +56,7 @@ class CountdownWidget(models.Model):
     color = models.CharField(max_length=7, default='#6366f1')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    color = models.CharField(max_length=7, default='#6366f1')
 
     def __str__(self):
         return self.title

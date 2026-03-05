@@ -14,6 +14,7 @@ urlpatterns = [
     path('widgets/create/', views.create_widget_choice, name='create_widget_choice'),
     path('widgets/create/habit/', views.create_habit_widget, name='create_habit_widget'),
     path('widgets/create/countdown/', views.create_countdown_widget, name='create_countdown_widget'),
+    path('widgets/create/countdown/<int:widget_id>/shortcut/', views.create_countdown_shortcut, name='create_countdown_shortcut'),
     path('widgets/view/<int:widget_id>/', views.view_countdown_widget, name='view_countdown_widget'),
     path('history/', views.history, name='history'),
     path('settings/', views.settings_view, name='settings'),

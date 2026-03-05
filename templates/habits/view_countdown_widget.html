@@ -17,17 +17,12 @@
                     <span id="time-label">Units</span>
                 </div>
             </div>
-            
             <div id="countdown-data" 
                  data-time="{{ widget.target_time|time:'H:i' }}"
                  data-date="{{ widget.target_date|date:'Y-m-d' }}"
                  data-recurrence="{{ widget.recurrence }}"
                  style="display:none;">
             </div>
-
-            {% if widget.notes %}
-            <p class="text-muted mt-3 small">{{ widget.notes }}</p>
-            {% endif %}
         </div>
     </div>
 </div>
