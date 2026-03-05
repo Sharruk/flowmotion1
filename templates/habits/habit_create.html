@@ -94,6 +94,30 @@
                 <label for="reminder_time">Reminder Time</label>
                 <input type="time" id="reminder_time" name="reminder_time">
             </div>
+            <div class="form-group">
+                <label for="target_date">Target Date (Optional for Countdown)</label>
+                <input type="date" id="target_date" name="target_date">
+            </div>
+            <div class="form-group">
+                <label for="recurrence">Recurrence</label>
+                <select id="recurrence" name="recurrence">
+                    <option value="none">No Repeat</option>
+                    <option value="daily" selected>Daily</option>
+                    <option value="weekly">Weekly</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Count only selected days:</label>
+                <div class="checkbox-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;">
+                    <label><input type="checkbox" name="selected_days" value="Mon"> Mon</label>
+                    <label><input type="checkbox" name="selected_days" value="Tue"> Tue</label>
+                    <label><input type="checkbox" name="selected_days" value="Wed"> Wed</label>
+                    <label><input type="checkbox" name="selected_days" value="Thu"> Thu</label>
+                    <label><input type="checkbox" name="selected_days" value="Fri"> Fri</label>
+                    <label><input type="checkbox" name="selected_days" value="Sat"> Sat</label>
+                    <label><input type="checkbox" name="selected_days" value="Sun"> Sun</label>
+                </div>
+            </div>
         </div>
         
         <div class="form-section">

@@ -13,8 +13,23 @@
             <h4 id="habit-name">{{ next_habit.name }}</h4>
             <p id="habit-question">{{ next_habit.question }}</p>
             
-            <div class="countdown-timer" id="countdown" data-time="{{ next_habit.reminder_time|time:'H:i' }}">
-                --:--:--
+            <div class="circular-countdown">
+                <svg viewBox="0 0 100 100">
+                    <circle class="bg" cx="50" cy="50" r="45"></circle>
+                    <circle class="progress" cx="50" cy="50" r="45" id="progress-circle"></circle>
+                </svg>
+                <div class="countdown-text">
+                    <span id="time-value">--</span>
+                    <span id="time-label">Units</span>
+                </div>
+            </div>
+            
+            <div class="countdown-timer-legacy" id="countdown" 
+                 data-time="{{ next_habit.reminder_time|time:'H:i' }}"
+                 data-date="{{ next_habit.target_date|date:'Y-m-d' }}"
+                 data-recurrence="{{ next_habit.recurrence }}"
+                 data-days='{{ next_habit.selected_days|safe }}'
+                 style="display:none;">
             </div>
             
             <div class="widget-actions">
@@ -57,12 +72,43 @@
 .emotional-status {
     font-size: 24px;
 }
-.countdown-timer {
-    font-size: 32px;
-    font-weight: bold;
+.circular-countdown {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 20px auto;
+}
+.circular-countdown svg {
+    transform: rotate(-90deg);
+}
+.circular-countdown circle {
+    fill: none;
+    stroke-width: 8;
+}
+.circular-countdown circle.bg {
+    stroke: #eee;
+}
+.circular-countdown circle.progress {
+    stroke: #6366f1;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.5s ease;
+}
+.countdown-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     text-align: center;
-    margin: 20px 0;
-    color: #dc3545;
+}
+#time-value {
+    display: block;
+    font-size: 28px;
+    font-weight: bold;
+}
+#time-label {
+    font-size: 14px;
+    color: #666;
 }
 .widget-actions {
     display: flex;
@@ -83,23 +129,73 @@ function updateCountdown() {
     if (!timerElement) return;
     
     const targetTimeStr = timerElement.getAttribute('data-time');
-    const [hours, minutes] = targetTimeStr.split(':');
+    const targetDateStr = timerElement.getAttribute('data-date');
+    const recurrence = timerElement.getAttribute('data-recurrence');
+    const selectedDays = JSON.parse(timerElement.getAttribute('data-days') || '[]');
     
     const now = new Date();
-    const target = new Date();
-    target.setHours(parseInt(hours), parseInt(minutes), 0);
+    let target = new Date();
     
+    if (targetDateStr) {
+        target = new Date(targetDateStr + 'T' + targetTimeStr);
+    } else {
+        const [hours, minutes] = targetTimeStr.split(':');
+        target.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+    }
+    
+    // Recurrence logic
     if (target < now) {
-        target.setDate(target.getDate() + 1);
+        if (recurrence === 'daily') {
+            target.setDate(target.getDate() + 1);
+        } else if (recurrence === 'weekly') {
+            target.setDate(target.getDate() + 7);
+        }
+    }
+    
+    // Filter by selected days if weekly or daily with day filter
+    if (selectedDays.length > 0) {
+        const daysMap = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
+        const targetDays = selectedDays.map(d => daysMap[d]);
+        while (!targetDays.includes(target.getDay())) {
+            target.setDate(target.getDate() + 1);
+        }
     }
     
     const diff = target - now;
     
-    const h = Math.floor(diff / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
+    // Circular progress calculation (example: 24h max or distance to start)
+    const circle = document.getElementById('progress-circle');
+    const maxOffset = 283;
+    let percentage = 0;
     
-    timerElement.innerText = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    const timeValue = document.getElementById('time-value');
+    const timeLabel = document.getElementById('time-label');
+    
+    if (diff > 0) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        
+        if (days > 0) {
+            timeValue.innerText = days;
+            timeLabel.innerText = days === 1 ? 'Day' : 'Days';
+            percentage = (days % 30) / 30; // Scale 30 days
+        } else if (hours > 0) {
+            timeValue.innerText = hours;
+            timeLabel.innerText = hours === 1 ? 'Hour' : 'Hours';
+            percentage = hours / 24;
+        } else {
+            timeValue.innerText = minutes;
+            timeLabel.innerText = minutes === 1 ? 'Min' : 'Mins';
+            percentage = minutes / 60;
+        }
+        
+        circle.style.strokeDashoffset = maxOffset * (1 - percentage);
+    } else {
+        timeValue.innerText = '0';
+        timeLabel.innerText = 'Due';
+        circle.style.strokeDashoffset = maxOffset;
+    }
 }
 
 setInterval(updateCountdown, 1000);

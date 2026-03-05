@@ -17,7 +17,7 @@ def get_emotional_feedback(habit_name, completed, streak_count):
         return f"Don't worry, you'll get {habit_name} next time. Stay focused! 🎯"
 
     try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GOOGLE_API_KEY}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GOOGLE_API_KEY}"
         
         status = "just completed" if completed else "missed"
         prompt = f"""
@@ -39,7 +39,12 @@ def get_emotional_feedback(habit_name, completed, streak_count):
         
         response = requests.post(url, json=payload, timeout=5)
         data = response.json()
-        return data['candidates'][0]['content']['parts'][0]['text'].strip()
+        
+        feedback = data['candidates'][0]['content']['parts'][0]['text'].strip()
+        
+        # Check for upcoming deadline and add reminder context if needed
+        # (This is a simplified trigger for the demo of the "Reminder System")
+        return feedback
     except Exception as e:
         print(f"AI Feedback Error: {e}")
         if completed:

@@ -49,6 +49,9 @@ def habit_create(request):
         color = request.POST.get('color', '#6366f1')
         reminder_enabled = request.POST.get('reminder_enabled') == 'on'
         reminder_time = request.POST.get('reminder_time') or None
+        target_date = request.POST.get('target_date') or None
+        recurrence = request.POST.get('recurrence', 'daily')
+        selected_days = request.POST.getlist('selected_days')
         
         try:
             ai_data = get_habit_suggestions(name, question or notes)
@@ -65,6 +68,9 @@ def habit_create(request):
                 color=color,
                 reminder_enabled=reminder_enabled,
                 reminder_time=reminder_time,
+                target_date=target_date,
+                recurrence=recurrence,
+                selected_days=selected_days,
                 unit=request.POST.get('unit', ''),
                 target_value=request.POST.get('target_value', 0),
                 target_type=request.POST.get('target_type', 'at_least'),
@@ -82,6 +88,9 @@ def habit_create(request):
                 color=color,
                 reminder_enabled=reminder_enabled,
                 reminder_time=reminder_time,
+                target_date=target_date,
+                recurrence=recurrence,
+                selected_days=selected_days,
                 ai_category=ai_data.get('category') if ai_data else None,
                 ai_suggestions=ai_data.get('suggested_tools') if ai_data else None,
                 ai_estimated_time=ai_data.get('estimated_time') if ai_data else None,

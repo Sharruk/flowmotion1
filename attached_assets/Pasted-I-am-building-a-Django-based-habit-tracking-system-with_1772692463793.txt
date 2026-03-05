@@ -1,0 +1,78 @@
+I am building a Django-based habit tracking system with Linux desktop widgets.
+
+I want you to design and implement a dynamic circular countdown widget similar to a mobile countdown app.
+
+Widget Features:
+
+1. Show circular progress bar
+   - Display remaining days/hours/minutes
+   - Progress decreases as time passes
+   - Center text shows "X Days" or "X Hours"
+
+2. Countdown Configuration
+   - User can select:
+     • Target date
+     • Target time
+     • Repeat days (Mon–Sun)
+     • Recurrence (daily / weekly / no repeat)
+   - Option: Count only selected days
+
+3. Dynamic Timer
+   - Use real system/server time
+   - Update automatically every minute
+   - No hardcoded values
+   - No cached/static numbers
+
+4. Pre and Post Reminder System
+   - Pre-reminder: 5 minutes before deadline
+   - Main reminder: At deadline
+   - Post-reminder: 5 minutes after if not completed
+   - Stop reminders when marked completed
+
+5. Desktop Integration (Linux)
+   - Widget should work via .desktop launcher
+   - Open lightweight widget mode
+   - Auto refresh data
+   - Sync with backend
+
+6. Frontend
+   - Use HTML + CSS + JS
+   - Circular progress animation
+   - Responsive layout
+   - Minimal UI like mobile screenshot
+
+7. Backend
+   - Store:
+     • deadline
+     • recurrence
+     • selected days
+     • completion status
+   - Calculate remaining time dynamically
+   - Provide API for widget data
+
+8. Reliability
+   - Works after reboot
+   - Works on lock screen
+   - No frozen values
+   - No stuck countdown
+
+Implementation Instructions:
+
+- First analyze existing widget code
+- Remove static/hardcoded countdown values
+- Refactor countdown logic
+- Implement real-time calculation
+- Add reminder scheduler
+- Test on Ubuntu VM
+
+Deliverables:
+
+1. Updated backend logic
+2. Updated widget frontend
+3. Reminder scheduler
+4. Working circular countdown
+5. Documentation comments
+
+Work step-by-step and explain each modification.
+Do not skip debugging.
+Do not simplify.
