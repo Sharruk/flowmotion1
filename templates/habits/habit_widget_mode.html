@@ -111,34 +111,28 @@ body {
 
 <script>
 function updateWidgetCountdown() {
-    const timerElement = document.getElementById('widget-countdown');
-    const statusElement = document.getElementById('deadline-status');
-    if (!timerElement) return;
+    const el = document.getElementById('widget-countdown');
+    if (!el) return;
     
-    const targetTimeStr = timerElement.getAttribute('data-time');
-    if (!targetTimeStr) {
-        timerElement.innerText = "No Time";
-        return;
+    const startDateStr = el.getAttribute('data-start');
+    const duration = parseInt(el.getAttribute('data-duration'));
+    const serverTimeStr = el.getAttribute('data-server-time');
+    
+    if (startDateStr && !isNaN(duration)) {
+        const startDate = new Date(startDateStr);
+        const baseTime = serverTimeStr ? new Date(serverTimeStr) : new Date();
+        
+        const startDay = Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+        const currentDay = Date.UTC(baseTime.getFullYear(), baseTime.getMonth(), baseTime.getDate());
+        
+        const diffTime = currentDay - startDay;
+        const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        
+        let remaining = duration - daysPassed;
+        if (remaining < 0) remaining = 0;
+        
+        el.innerText = remaining;
     }
-
-    const [hours, minutes] = targetTimeStr.split(':');
-    
-    const now = new Date();
-    const target = new Date();
-    target.setHours(parseInt(hours), parseInt(minutes), 0);
-    
-    const diff = target - now;
-    
-    if (diff < 0) {
-        timerElement.innerText = "00:00";
-        statusElement.innerHTML = '<span class="deadline-passed">⏰ Deadline passed</span>';
-        return;
-    }
-    
-    const h = Math.floor(diff / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    
-    timerElement.innerText = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} remaining`;
 }
 
 setInterval(updateWidgetCountdown, 60000);

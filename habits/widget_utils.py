@@ -47,7 +47,7 @@ def create_habit_widget_shortcut(habit, request=None):
         return False, str(e)
 
 
-def _create_windows_shortcut(desktop_path, slug, habit, widget_url):
+def _create_windows_shortcut(desktop_path, slug, obj, widget_url):
     """Create a Windows .url shortcut file."""
     file_name = f"FlowMotion-{slug}.url"
     file_path = os.path.join(desktop_path, file_name)
@@ -66,14 +66,17 @@ Prop3=19,11
     return True, file_path
 
 
-def _create_linux_shortcut(desktop_path, slug, habit, widget_url):
+def _create_linux_shortcut(desktop_path, slug, obj, widget_url):
     """Create a Linux .desktop shortcut file."""
     file_name = f"flowmotion-{slug}.desktop"
     file_path = os.path.join(desktop_path, file_name)
+    
+    # Handle both Habit (name) and CountdownWidget (title)
+    display_name = getattr(obj, 'name', getattr(obj, 'title', 'Widget'))
 
     content = f"""[Desktop Entry]
-Name=FlowMotion – {habit.name}
-Comment=Track habit: {habit.name}
+Name=FlowMotion – {display_name}
+Comment=Track: {display_name}
 Exec=xdg-open "{widget_url}"
 Icon=appointment-new
 Terminal=false
