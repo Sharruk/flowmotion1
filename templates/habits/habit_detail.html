@@ -116,6 +116,14 @@
                         <a href="{{ rec.url }}" target="_blank" class="btn btn-primary">Open Tool</a>
                     </div>
                     {% endfor %}
+                {% elif habit.ai_suggestions %}
+                     {% for tool in habit.ai_suggestions %}
+                    <div class="tool-card">
+                        <h3>{{ tool.name }}</h3>
+                        <p>Suggested tool for {{ habit.name }}</p>
+                        <a href="{{ tool.url }}" target="_blank" class="btn btn-primary">Open Tool</a>
+                    </div>
+                    {% endfor %}
                 {% else %}
                     <div class="no-tools-message">
                         <p>No tools found yet. AI is working on it!</p>
@@ -124,36 +132,6 @@
             </div>
         </section>
 
-        <section class="ai-section">
-            <h2>AI Insights</h2>
-            <div class="ai-content">
-                <div class="ai-item">
-                    <span class="ai-label">Category:</span>
-                    <span class="ai-value">{{ habit.ai_category|default:"General" }}</span>
-                </div>
-                <div class="ai-item">
-                    <span class="ai-label">Estimated Time:</span>
-                    <span class="ai-value">{{ habit.ai_estimated_time|default:"30 minutes" }}</span>
-                </div>
-                <div class="ai-tools">
-                    <h3>Suggested Tools</h3>
-                    <ul class="tool-list">
-                        {% if habit.ai_suggestions %}
-                            {% for tool in habit.ai_suggestions %}
-                            <li>
-                                <a href="{{ tool.url }}" target="_blank" class="tool-link">
-                                    {{ tool.name }}
-                                </a>
-                            </li>
-                            {% endfor %}
-                        {% else %}
-                            <li class="text-muted">No specific tools suggested yet.</li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
-        </section>
-        
         <section class="chart-section">
             <h2>Progress</h2>
             <canvas id="progressChart" height="200"></canvas>

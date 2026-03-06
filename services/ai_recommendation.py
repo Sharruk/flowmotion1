@@ -73,8 +73,7 @@ Format:
 
 def get_fallback_tools():
     return [
-        {"name": "Gamma", "description": "AI-powered presentation and document creator", "url": "https://gamma.app"},
-        {"name": "Canva", "description": "Graphic design platform with AI magic tools", "url": "https://canva.com"},
+        {"name": "ChatGPT", "description": "Versatile AI assistant for various tasks", "url": "https://chatgpt.com"},
         {"name": "Notion AI", "description": "AI writing and organization assistant", "url": "https://notion.so"},
-        {"name": "ChatGPT", "description": "Versatile AI assistant for various tasks", "url": "https://chatgpt.com"}
+        {"name": "Perplexity AI", "description": "AI-powered search and information discovery", "url": "https://www.perplexity.ai"}
     ]
