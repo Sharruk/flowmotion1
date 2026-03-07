@@ -82,6 +82,7 @@ Icon=appointment-new
 Terminal=false
 Type=Application
 Categories=Utility;
+X-KeepTerminal=false
 """
     with open(file_path, "w") as f:
         f.write(content)

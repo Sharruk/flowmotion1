@@ -30,6 +30,7 @@
                 <div id="widget-countdown" class="countdown" 
                      data-start="{{ start_date }}" 
                      data-duration="{{ duration }}"
+                     data-time="{{ reminder_time }}"
                      data-server-time="{{ server_time }}">
                     Calculating...
                 </div>
@@ -117,6 +118,7 @@ function updateWidgetCountdown() {
     const startDateStr = el.getAttribute('data-start');
     const duration = parseInt(el.getAttribute('data-duration'));
     const serverTimeStr = el.getAttribute('data-server-time');
+    const targetTimeStr = el.getAttribute('data-time');
     
     if (startDateStr && !isNaN(duration)) {
         const startDate = new Date(startDateStr);
@@ -131,7 +133,7 @@ function updateWidgetCountdown() {
         let remaining = duration - daysPassed;
         if (remaining < 0) remaining = 0;
         
-        el.innerText = remaining;
+        el.innerText = remaining + " Days";
     }
 }
 

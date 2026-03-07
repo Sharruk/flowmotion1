@@ -202,6 +202,7 @@ def habit_detail(request, habit_id):
         'widget_exists': widget_exists,
         'start_date': habit.created_at.date().isoformat(),
         'duration': habit.duration,
+        'reminder_time': habit.reminder_time.strftime('%H:%M') if habit.reminder_time else None,
         'server_time': timezone.now().isoformat(),
     }
     
