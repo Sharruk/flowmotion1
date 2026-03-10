@@ -107,6 +107,11 @@ def google_login_view(request):
 
         # Log the user in
         login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        
+        # Explicitly save the session to ensure it persists before redirect
+        if not request.session.session_key:
+            request.session.create()
+        request.session.modified = True
 
         return JsonResponse({'success': True, 'redirect': '/dashboard/'})
 

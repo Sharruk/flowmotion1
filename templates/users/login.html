@@ -255,8 +255,9 @@
                 console.log('Backend response data:', data);
                 if (data.success) {
                     // Sign out of Firebase (Django session handles auth now)
-                    firebase.auth().signOut();
-                    window.location.href = data.redirect || '/dashboard/';
+                    firebase.auth().signOut().then(function() {
+                        window.location.href = data.redirect || '/dashboard/';
+                    });
                 } else {
                     firebase.auth().signOut();
                     alert('Sign-in failed: ' + (data.error || 'Unknown error'));
