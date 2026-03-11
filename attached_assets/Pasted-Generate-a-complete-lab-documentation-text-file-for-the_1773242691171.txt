@@ -1,0 +1,100 @@
+Generate a complete lab documentation text file for the following experiment.
+
+Course:
+ICS1405 – Software Engineering Principles and Practices
+
+Institution:
+Sri Sivasubramaniya Nadar College of Engineering, Kalavakkam
+
+Regulation:
+2023
+
+Batch:
+2024–2029
+
+Academic Year:
+2026–2027 (EVEN)
+
+Experiment Title:
+Experiment 7 – Explore MLFlow for a Machine Learning Task
+
+Project Used:
+FlowMotion – Intelligent Habit Tracking System
+
+Objective:
+Integrate MLFlow to track machine learning experiments, log parameters, monitor metrics, analyse results, and interpret patterns in experiment runs.
+
+Generate a structured .txt lab record with the following sections:
+
+1. Aim
+Clear objective of the experiment.
+
+2. Problem Analysis
+Explain the need for experiment tracking in machine learning projects and why MLFlow is useful.
+
+3. Tools and Technologies Used
+Include:
+Python
+MLFlow
+Scikit-learn
+Pandas
+Matplotlib
+Replit environment
+
+4. System Architecture
+Explain how MLFlow integrates with the ML experiment pipeline.
+
+5. Algorithm / Experiment Setup
+Explain step-by-step logic for:
+- Loading dataset
+- Training model
+- Logging parameters
+- Logging metrics
+- Saving model artifacts
+
+6. Implementation Steps
+Write detailed numbered steps explaining how MLFlow is integrated.
+
+7. Commands Used
+Include example commands like:
+mlflow ui
+mlflow run
+pip install mlflow
+
+8. Experiment Tracking
+Explain how multiple runs are recorded and compared.
+
+Include example table:
+
+Run ID | Learning Rate | Accuracy | Loss
+Run1 | 0.01 | 0.85 | 0.40
+Run2 | 0.001 | 0.88 | 0.35
+Run3 | 0.1 | 0.75 | 0.60
+
+9. Analysis of Experiment Results
+Explain patterns observed from MLFlow logs and which parameters improved model performance.
+
+10. Graphs and Plots (description)
+Describe the plots that appear in the MLFlow dashboard.
+
+11. Observations
+Record key observations from experiment runs.
+
+12. Inference
+Explain insights gained from experiment tracking.
+
+13. Conclusion
+Summarize how MLFlow helps track experiments and improves reproducibility.
+
+14. Screenshots Placeholder
+Add placeholders like:
+[Screenshot of MLFlow Dashboard]
+[Screenshot of Experiment Runs]
+[Screenshot of Parameter Comparison]
+
+Output Requirement:
+Generate the final result as a well formatted TEXT FILE named:
+
+experiment7_mlflow_lab_record.txt
+
+The content should be detailed enough to fill 4–5 pages when printed.

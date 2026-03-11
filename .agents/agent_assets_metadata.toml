@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "AstEsYiWIFWg89rlqYOxJ"
+uri = "file://experiment7_mlflow_lab_record.txt"
+type = "text"
+title = "Experiment 7 – MLFlow Lab Record"
