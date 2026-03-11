@@ -91,18 +91,27 @@
             <h2>Statistics</h2>
             <div class="stat-grid">
                 <div class="stat-item">
-                    <span class="stat-value">{{ streak.current_streak }}</span>
+                    <span class="stat-value" id="stat-current-streak">{{ streak.current_streak }}</span>
                     <span class="stat-label">Current Streak</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-value">{{ streak.best_streak }}</span>
+                    <span class="stat-value" id="stat-best-streak">{{ streak.best_streak }}</span>
                     <span class="stat-label">Best Streak</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-value">{{ completion_rate }}%</span>
+                    <span class="stat-value" id="stat-completion-rate">{{ completion_rate }}%</span>
                     <span class="stat-label">Completion Rate</span>
                 </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="stat-total-completions">0</span>
+                    <span class="stat-label">Total Completions</span>
+                </div>
             </div>
+        </section>
+        
+        <section class="weekly-stats">
+            <h2>This Week</h2>
+            <canvas id="habitWeeklyChart" height="100"></canvas>
         </section>
         
         <section class="ai-tools-section">
@@ -133,7 +142,7 @@
         </section>
 
         <section class="chart-section">
-            <h2>Progress</h2>
+            <h2>Monthly Progress</h2>
             <canvas id="progressChart" height="200"></canvas>
         </section>
         
@@ -166,6 +175,7 @@ document.addEventListener('DOMContentLoaded', function() {
     fetch('/api/habits/{{ habit.id }}/responses/')
         .then(response => response.json())
         .then(data => {
+            // Monthly progress chart
             const ctx = document.getElementById('progressChart').getContext('2d');
             const labels = data.responses.map(r => {
                 const date = new Date(r.date);
@@ -201,8 +211,50 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             });
+            
+            // Weekly chart
+            if (data.weekly) {
+                const weekCtx = document.getElementById('habitWeeklyChart');
+                if (weekCtx) {
+                    const weekContext = weekCtx.getContext('2d');
+                    new Chart(weekContext, {
+                        type: 'bar',
+                        data: {
+                            labels: data.weekly.labels,
+                            datasets: [{
+                                label: 'Completed',
+                                data: data.weekly.data,
+                                backgroundColor: '{{ habit.color }}',
+                                borderColor: '{{ habit.color }}',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 1,
+                                    ticks: { stepSize: 1 }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
         })
-        .catch(err => console.log('Chart data not loaded'));
+        .catch(err => console.error('Chart data not loaded:', err));
+    
+    // Load stats via API
+    fetch('/api/habits/{{ habit.id }}/')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('stat-current-streak').textContent = data.current_streak;
+            document.getElementById('stat-best-streak').textContent = data.best_streak;
+            document.getElementById('stat-completion-rate').textContent = data.completion_rate + '%';
+            document.getElementById('stat-total-completions').textContent = data.total_completions;
+        })
+        .catch(err => console.error('Stats load failed:', err));
 });
 </script>
 {% endblock %}

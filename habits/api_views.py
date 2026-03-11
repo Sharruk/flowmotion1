@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from datetime import date, timedelta
 from .models import Habit, HabitResponse, StreakData
+from .statistics import get_weekly_data, get_habit_weekly_data, get_habit_statistics, get_user_statistics
 
 
 @login_required
@@ -10,7 +11,7 @@ def habit_list_api(request):
     habits = Habit.objects.filter(user=request.user)
     data = []
     for habit in habits:
-        streak, _ = StreakData.objects.get_or_create(habit=habit)
+        stats = get_habit_statistics(habit)
         data.append({
             'id': str(habit.id),
             'name': habit.name,
@@ -18,8 +19,9 @@ def habit_list_api(request):
             'frequency': habit.frequency,
             'color': habit.color,
             'status': habit.status,
-            'current_streak': streak.current_streak,
-            'best_streak': streak.best_streak,
+            'current_streak': stats['current_streak'],
+            'best_streak': stats['best_streak'],
+            'completion_rate': stats['completion_rate'],
         })
     return JsonResponse({'habits': data})
 
@@ -27,7 +29,8 @@ def habit_list_api(request):
 @login_required
 def habit_detail_api(request, habit_id):
     habit = get_object_or_404(Habit, id=habit_id, user=request.user)
-    streak, _ = StreakData.objects.get_or_create(habit=habit)
+    stats = get_habit_statistics(habit)
+    weekly = get_habit_weekly_data(habit)
     
     data = {
         'id': str(habit.id),
@@ -37,8 +40,11 @@ def habit_detail_api(request, habit_id):
         'color': habit.color,
         'status': habit.status,
         'notes': habit.notes,
-        'current_streak': streak.current_streak,
-        'best_streak': streak.best_streak,
+        'current_streak': stats['current_streak'],
+        'best_streak': stats['best_streak'],
+        'completion_rate': stats['completion_rate'],
+        'total_completions': stats['total_completions'],
+        'weekly_data': weekly,
     }
     return JsonResponse(data)
 
@@ -64,45 +70,30 @@ def habit_responses_api(request, habit_id):
             'emotional_state': response.emotional_state,
         })
     
-    return JsonResponse({'responses': data})
+    weekly = get_habit_weekly_data(habit)
+    
+    return JsonResponse({
+        'responses': data,
+        'weekly': weekly,
+    })
 
 
 @login_required
 def stats_api(request):
-    habits = Habit.objects.filter(user=request.user, status='active')
-    today = date.today()
-    week_ago = today - timedelta(days=7)
-    
-    total_habits = habits.count()
-    total_responses_week = HabitResponse.objects.filter(
-        habit__user=request.user,
-        date__range=[week_ago, today]
-    ).count()
-    completed_responses_week = HabitResponse.objects.filter(
-        habit__user=request.user,
-        date__range=[week_ago, today],
-        completed=True
-    ).count()
-    
-    completion_rate = (completed_responses_week / total_responses_week * 100) if total_responses_week > 0 else 0
-    
-    daily_data = []
-    for i in range(7):
-        d = today - timedelta(days=6-i)
-        day_responses = HabitResponse.objects.filter(
-            habit__user=request.user,
-            date=d
-        )
-        completed = day_responses.filter(completed=True).count()
-        total = day_responses.count()
-        daily_data.append({
-            'date': d.isoformat(),
-            'completed': completed,
-            'total': total,
-        })
+    user_stats = get_user_statistics(request.user)
+    weekly = get_weekly_data(request.user)
     
     return JsonResponse({
-        'total_habits': total_habits,
-        'completion_rate': round(completion_rate, 1),
-        'daily_data': daily_data,
+        'total_habits': user_stats['total_habits'],
+        'completion_rate': user_stats['weekly_completion_rate'],
+        'overall_rate': user_stats['overall_completion_rate'],
+        'weekly': weekly,
+        'daily_data': [
+            {
+                'date': weekly['dates'][i],
+                'completed': weekly['completed'][i],
+                'total': weekly['total'][i],
+            }
+            for i in range(7)
+        ],
     })

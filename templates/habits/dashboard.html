@@ -18,6 +18,10 @@
             <span class="stat-value" id="completion-rate">--</span>
             <span class="stat-label">Weekly Rate</span>
         </div>
+        <div class="stat-card">
+            <span class="stat-value" id="overall-rate">--</span>
+            <span class="stat-label">Overall Rate</span>
+        </div>
     </div>
     
     <section class="habits-today">
@@ -64,7 +68,7 @@
     </section>
     
     <section class="weekly-chart">
-        <h2>This Week</h2>
+        <h2>This Week – Completed</h2>
         <canvas id="weeklyChart" height="200"></canvas>
     </section>
 </div>
@@ -75,19 +79,28 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     fetch('/api/stats/')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error('Stats API failed');
+            return response.json();
+        })
         .then(data => {
+            console.log('Stats data:', data);
             document.getElementById('completion-rate').textContent = data.completion_rate + '%';
+            document.getElementById('overall-rate').textContent = data.overall_rate + '%';
             
-            const ctx = document.getElementById('weeklyChart').getContext('2d');
-            const labels = data.daily_data.map(d => {
-                const date = new Date(d.date);
-                return date.toLocaleDateString('en-US', { weekday: 'short' });
-            });
-            const completed = data.daily_data.map(d => d.completed);
-            const totals = data.daily_data.map(d => d.total);
+            const ctx = document.getElementById('weeklyChart');
+            if (!ctx) return;
             
-            new Chart(ctx, {
+            const ctxContext = ctx.getContext('2d');
+            const labels = data.weekly ? data.weekly.labels : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const completed = data.weekly ? data.weekly.completed : [];
+            const totals = data.weekly ? data.weekly.total : [];
+            
+            if (window.weeklyChartInstance) {
+                window.weeklyChartInstance.destroy();
+            }
+            
+            window.weeklyChartInstance = new Chart(ctxContext, {
                 type: 'bar',
                 data: {
                     labels: labels,
@@ -95,20 +108,30 @@ document.addEventListener('DOMContentLoaded', function() {
                         label: 'Completed',
                         data: completed,
                         backgroundColor: '#6366f1',
+                        borderColor: '#4f46e5',
+                        borderWidth: 1,
                     }]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: true,
                     scales: {
                         y: {
                             beginAtZero: true,
-                            ticks: { stepSize: 1 }
+                            ticks: { 
+                                stepSize: 1,
+                                precision: 0
+                            },
+                            title: { display: true, text: 'Completions' }
                         }
+                    },
+                    plugins: {
+                        legend: { display: true, position: 'top' }
                     }
                 }
             });
         })
-        .catch(err => console.log('Stats not loaded'));
+        .catch(err => console.error('Stats not loaded:', err));
 });
 </script>
 {% endblock %}
