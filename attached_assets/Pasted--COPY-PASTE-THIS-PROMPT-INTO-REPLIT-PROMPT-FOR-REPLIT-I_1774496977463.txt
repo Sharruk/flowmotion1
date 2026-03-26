@@ -1,0 +1,170 @@
+✅ COPY–PASTE THIS PROMPT INTO REPLIT
+PROMPT FOR REPLIT:
+
+I am doing Experiment 8: Explore Optuna for Hyperparameter Tuning with an ML Task for the course ICS1405 – Software Engineering Principles and Practices [TCP].
+
+Generate a complete, detailed, full assignment write-up in a professional academic format, including:
+
+TITLE PAGE DETAILS
+Course: ICS1405 – Software Engineering Principles and Practices
+
+Experiment 8
+
+Topic: Explore Optuna for Hyperparameter Tuning with a Machine Learning Task
+
+Student Name: [Generate placeholder]
+
+Register Number: [Generate placeholder]
+
+Project Name: FlowMotion – Intelligent Habit & Routine Management System
+
+Date: Auto-generate
+
+SECTION 1 – INTRODUCTION
+Include:
+
+Overview of Hyperparameter Tuning
+
+Why optimization is needed in ML
+
+Importance of Optuna
+
+Relevance of tuning to the FlowMotion ML module
+
+Objectives of the experiment
+
+Scope & assumptions
+
+SECTION 2 – PROBLEM ANALYSIS
+Describe:
+
+What ML task is chosen (classification or regression)
+
+Why the chosen model needs tuning
+
+Baseline model behavior
+
+ML dataset (you may assume a standard dataset like Iris / Diabetes / MNIST unless specified)
+
+SECTION 3 – IMPLEMENTATION USING OPTUNA
+Include complete explanation + code blocks:
+
+3.1 Baseline Model
+Baseline model training code
+
+Default hyperparameters
+
+Baseline metrics: accuracy, precision, recall, F1-score
+
+3.2 Optuna Setup
+Installation command
+
+Import statements
+
+Explanation of Trial, Study, Objective Function
+
+3.3 Search Space Definition
+Provide well-explained parameter ranges such as:
+
+learning_rate
+
+n_estimators
+
+max_depth
+
+dropout rate
+
+optimizer choices
+
+etc.
+
+3.4 Optuna Objective Function
+Provide fully working pseudo-code or real code.
+
+3.5 Running Optimization
+Include:
+
+Number of trials
+
+Optimization direction
+
+Sample logs
+
+SECTION 4 – RESULTS & EVALUATION
+4.1 Baseline vs Optimized Model Comparison
+Include tables:
+
+Model	Accuracy	Precision	Recall	F1-Score
+4.2 Visualizations (describe + generate text placeholders)
+Optimization history
+
+Parameter importance chart
+
+Best trial summary
+
+4.3 Evaluation & Analysis
+Write a deep explanation on:
+
+Whether performance improved
+
+Why the improvement happened
+
+What hyperparameters influenced the model most
+
+How tuning impacts real-world performance
+
+SECTION 5 – JUSTIFICATION
+Explain:
+
+Why the chosen hyperparameters are ideal
+
+Trade-offs
+
+Impact on reliability, accuracy, inference time
+
+Why Optuna is better than GridSearch / RandomSearch
+
+SECTION 6 – OBSERVATIONS
+Include:
+
+Steps followed
+
+What challenges occurred
+
+Issues during tuning
+
+How they were solved
+
+Notes on reproducibility
+
+SECTION 7 – CONCLUSION
+Include:
+
+Summary of the entire experiment
+
+Key takeaways
+
+How Optuna improved the ML system
+
+Its importance inside the FlowMotion project’s AI module
+
+SECTION 8 – APPENDIX
+Include:
+
+Complete Optuna code
+
+Training logs
+
+Sample charts (text placeholders)
+
+Additional notes
+
+IMPORTANT REQUIREMENTS
+When generating the assignment:
+✔ Make it extremely detailed
+✔ Use formal academic writing
+✔ Include code, tables, diagrams (ASCII outline), and explanations
+✔ No plagiarism
+✔ Expand everything with deep reasoning
+
+END OF PROMPT
